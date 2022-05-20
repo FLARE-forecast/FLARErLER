@@ -1,12 +1,12 @@
 test_that("LER met files are generated", {
 
-  template_folder <- system.file("example", package = "FLAREr")
+  template_folder <- system.file("example", package = "FLARErLER")
 
   source(file.path(template_folder, "R/test_met_prep.R"))
   config$model_settings$use_ler <- TRUE
   config$model_settings$model <- "GLM"
 
-  met_out <- FLAREr::generate_met_files(obs_met_file = observed_met_file,
+  met_out <- FLARErLER::generate_met_files(obs_met_file = observed_met_file,
                                        out_dir = config$file_path$execute_directory,
                                        forecast_dir = forecast_dir,
                                        config)
@@ -18,13 +18,13 @@ test_that("LER met files are generated", {
 
 test_that("LER inflow & outflow files are generated", {
 
-  template_folder <- system.file("example", package = "FLAREr")
+  template_folder <- system.file("example", package = "FLARErLER")
   source(file.path(template_folder, "R/test_inflow_prep.R"))
 
   config$model_settings$use_ler <- TRUE
   config$model_settings$model <- "GLM"
 
-  inflow_outflow_files <- FLAREr::create_inflow_outflow_files(inflow_file_dir = inflow_file_dir,
+  inflow_outflow_files <- FLARErLER::create_inflow_outflow_files(inflow_file_dir = inflow_file_dir,
                                                               inflow_obs = cleaned_inflow_file,
                                                               working_directory = config$file_path$execute_directory,
                                                               config,
@@ -40,16 +40,16 @@ test_that("LER inflow & outflow files are generated", {
 #Set initial conditions
 test_that("LER-GLM initial conditions are generated", {
 
-  template_folder <- system.file("example", package = "FLAREr")
+  template_folder <- system.file("example", package = "FLARErLER")
   source(file.path(template_folder, "R/test_met_prep_ler.R"))
 
   config$model_settings$model <- "GLM"
 
-  obs <- FLAREr::create_obs_matrix(cleaned_observations_file_long,
+  obs <- FLARErLER::create_obs_matrix(cleaned_observations_file_long,
                                    obs_config,
                                    config)
 
-  init <- FLAREr::generate_initial_conditions(states_config,
+  init <- FLARErLER::generate_initial_conditions(states_config,
                                               obs_config,
                                               pars_config,
                                               obs,
@@ -63,16 +63,16 @@ test_that("LER-GLM initial conditions are generated", {
 #Set initial conditions
 test_that("LER-GOTM initial conditions are generated", {
 
-  template_folder <- system.file("example", package = "FLAREr")
+  template_folder <- system.file("example", package = "FLARErLER")
   source(file.path(template_folder, "R/test_met_prep_ler.R"))
 
   config$model_settings$model <- "GOTM"
 
-  obs <- FLAREr::create_obs_matrix(cleaned_observations_file_long,
+  obs <- FLARErLER::create_obs_matrix(cleaned_observations_file_long,
                                    obs_config,
                                    config)
 
-  init <- FLAREr::generate_initial_conditions(states_config,
+  init <- FLARErLER::generate_initial_conditions(states_config,
                                               obs_config,
                                               pars_config,
                                               obs,
@@ -86,16 +86,16 @@ test_that("LER-GOTM initial conditions are generated", {
 # LER-GLM-EnKF Tests ----
 test_that("LER-GLM-EnKF can be run", {
 
-  template_folder <- system.file("example", package = "FLAREr")
+  template_folder <- system.file("example", package = "FLARErLER")
 
   source(file.path(template_folder, "R", "test_enkf_prep_ler.R"))
   config$model_settings$model <- "GLM"
 
-  obs <- FLAREr::create_obs_matrix(cleaned_observations_file_long,
+  obs <- FLARErLER::create_obs_matrix(cleaned_observations_file_long,
                                    obs_config,
                                    config)
 
-  init <- FLAREr::generate_initial_conditions(states_config,
+  init <- FLARErLER::generate_initial_conditions(states_config,
                                               obs_config,
                                               pars_config,
                                               obs,
@@ -124,7 +124,7 @@ test_that("LER-GLM-EnKF can be run", {
   # debug = TRUE
 
   #Run EnKF
-  enkf_output <- FLAREr::run_da_forecast_all(states_init = init$states,
+  enkf_output <- FLARErLER::run_da_forecast_all(states_init = init$states,
                                          pars_init = init$pars,
                                          aux_states_init = init$aux_states_init,
                                          obs = obs,
@@ -155,17 +155,17 @@ test_that("LER-GLM-EnKF can be run", {
   testthat::expect_true(all(unlist(chk)))
 
   # Save forecast
-  saved_file <- FLAREr::write_forecast_netcdf(da_forecast_output = enkf_output,
+  saved_file <- FLARErLER::write_forecast_netcdf(da_forecast_output = enkf_output,
                                               forecast_output_directory = config$file_path$forecast_output_directory)
   testthat::expect_true(file.exists(saved_file))
 
   #Create EML Metadata
-  FLAREr::create_flare_metadata(file_name = saved_file,
+  FLARErLER::create_flare_metadata(file_name = saved_file,
                                 da_forecast_output = enkf_output)
   file_chk <- list.files(config$file_path$forecast_output_directory, pattern = ".xml")
   testthat::expect_true(length(file_chk) > 0)
 
-  FLAREr::plotting_general(file_name = saved_file,
+  FLARErLER::plotting_general(file_name = saved_file,
                            qaqc_data_directory = config$file_path$qaqc_data_directory)
   file_chk <- list.files(config$file_path$forecast_output_directory, pattern = ".pdf")
   testthat::expect_true(length(file_chk) > 0)
@@ -174,17 +174,17 @@ test_that("LER-GLM-EnKF can be run", {
 # LER-GOTM-EnKF Tests ----
 test_that("LER-GOTM-EnKF can be run", {
 
-  template_folder <- system.file("example", package = "FLAREr")
+  template_folder <- system.file("example", package = "FLARErLER")
 
   source(file.path(template_folder, "R", "test_enkf_prep_ler.R"))
   config$model_settings$model <- "GOTM"
   config$output_settings$diagnostics_names <- NULL
 
-  obs <- FLAREr::create_obs_matrix(cleaned_observations_file_long,
+  obs <- FLARErLER::create_obs_matrix(cleaned_observations_file_long,
                                    obs_config,
                                    config)
 
-  init <- FLAREr::generate_initial_conditions(states_config,
+  init <- FLARErLER::generate_initial_conditions(states_config,
                                               obs_config,
                                               pars_config,
                                               obs,
@@ -213,7 +213,7 @@ test_that("LER-GOTM-EnKF can be run", {
   # debug = FALSE
 
   #Run EnKF
-  enkf_output <- FLAREr::run_da_forecast_all(states_init = init$states,
+  enkf_output <- FLARErLER::run_da_forecast_all(states_init = init$states,
                                              pars_init = init$pars,
                                              aux_states_init = init$aux_states_init,
                                              obs = obs,
@@ -244,17 +244,17 @@ test_that("LER-GOTM-EnKF can be run", {
   testthat::expect_true(all(unlist(chk)))
 
   # Save forecast
-  saved_file <- FLAREr::write_forecast_netcdf(da_forecast_output = enkf_output,
+  saved_file <- FLARErLER::write_forecast_netcdf(da_forecast_output = enkf_output,
                                               forecast_output_directory = config$file_path$forecast_output_directory)
   testthat::expect_true(file.exists(saved_file))
 
   #Create EML Metadata
-  FLAREr::create_flare_metadata(file_name = saved_file,
+  FLARErLER::create_flare_metadata(file_name = saved_file,
                                 da_forecast_output = enkf_output)
   file_chk <- list.files(config$file_path$forecast_output_directory, pattern = ".xml")
   testthat::expect_true(length(file_chk) > 0)
 
-  FLAREr::plotting_general(file_name = saved_file,
+  FLARErLER::plotting_general(file_name = saved_file,
                            qaqc_data_directory = config$file_path$qaqc_data_directory)
   file_chk <- list.files(config$file_path$forecast_output_directory, pattern = ".pdf")
   testthat::expect_true(length(file_chk) > 0)
@@ -263,17 +263,17 @@ test_that("LER-GOTM-EnKF can be run", {
 # LER-Simstrat-EnKF Tests ----
 test_that("LER-Simstrat-EnKF can be run", {
 
-  template_folder <- system.file("example", package = "FLAREr")
+  template_folder <- system.file("example", package = "FLARErLER")
 
   source(file.path(template_folder, "R", "test_enkf_prep_ler.R"))
   config$model_settings$model <- "Simstrat"
   config$output_settings$diagnostics_names <- NULL
 
-  obs <- FLAREr::create_obs_matrix(cleaned_observations_file_long,
+  obs <- FLARErLER::create_obs_matrix(cleaned_observations_file_long,
                                    obs_config,
                                    config)
 
-  init <- FLAREr::generate_initial_conditions(states_config,
+  init <- FLARErLER::generate_initial_conditions(states_config,
                                               obs_config,
                                               pars_config,
                                               obs,
@@ -302,7 +302,7 @@ test_that("LER-Simstrat-EnKF can be run", {
   # debug = TRUE
 
   #Run EnKF
-  enkf_output <- FLAREr::run_da_forecast_all(states_init = init$states,
+  enkf_output <- FLARErLER::run_da_forecast_all(states_init = init$states,
                                              pars_init = init$pars,
                                              aux_states_init = init$aux_states_init,
                                              obs = obs,
@@ -333,17 +333,17 @@ test_that("LER-Simstrat-EnKF can be run", {
   testthat::expect_true(all(unlist(chk)))
 
   # Save forecast
-  saved_file <- FLAREr::write_forecast_netcdf(da_forecast_output = enkf_output,
+  saved_file <- FLARErLER::write_forecast_netcdf(da_forecast_output = enkf_output,
                                               forecast_output_directory = config$file_path$forecast_output_directory)
   testthat::expect_true(file.exists(saved_file))
 
   #Create EML Metadata
-  FLAREr::create_flare_metadata(file_name = saved_file,
+  FLARErLER::create_flare_metadata(file_name = saved_file,
                                 da_forecast_output = enkf_output)
   file_chk <- list.files(config$file_path$forecast_output_directory, pattern = ".xml")
   testthat::expect_true(length(file_chk) > 0)
 
-  FLAREr::plotting_general(file_name = saved_file,
+  FLARErLER::plotting_general(file_name = saved_file,
                            qaqc_data_directory = config$file_path$qaqc_data_directory)
   file_chk <- list.files(config$file_path$forecast_output_directory, pattern = ".pdf")
   testthat::expect_true(length(file_chk) > 0)
@@ -352,12 +352,12 @@ test_that("LER-Simstrat-EnKF can be run", {
 # LER-GLM-PF Tests ----
 test_that("LER-GLM-PF can be run", {
 
-  template_folder <- system.file("example", package = "FLAREr")
+  template_folder <- system.file("example", package = "FLARErLER")
 
   source(file.path(template_folder, "R", "test_enkf_prep_ler.R"))
   config$model_settings$model <- "GLM"
 
-  obs <- FLAREr::create_obs_matrix(cleaned_observations_file_long,
+  obs <- FLARErLER::create_obs_matrix(cleaned_observations_file_long,
                                    obs_config,
                                    config)
 
@@ -418,17 +418,17 @@ test_that("LER-GLM-PF can be run", {
   testthat::expect_true(all(unlist(chk)))
 
   # Save forecast
-  saved_file <- FLAREr::write_forecast_netcdf(da_forecast_output = enkf_output,
+  saved_file <- FLARErLER::write_forecast_netcdf(da_forecast_output = enkf_output,
                                               forecast_output_directory = config$file_path$forecast_output_directory)
   testthat::expect_true(file.exists(saved_file))
 
   #Create EML Metadata
-  FLAREr::create_flare_metadata(file_name = saved_file,
+  FLARErLER::create_flare_metadata(file_name = saved_file,
                                 da_forecast_output = enkf_output)
   file_chk <- list.files(config$file_path$forecast_output_directory, pattern = ".xml")
   testthat::expect_true(length(file_chk) > 0)
 
-  FLAREr::plotting_general(file_name = saved_file,
+  FLARErLER::plotting_general(file_name = saved_file,
                            qaqc_data_directory = config$file_path$qaqc_data_directory)
   file_chk <- list.files(config$file_path$forecast_output_directory, pattern = ".pdf")
   testthat::expect_true(length(file_chk) > 0)
@@ -437,14 +437,14 @@ test_that("LER-GLM-PF can be run", {
 # LER-GLM can be restarted ----
 test_that("LER-GLM can be restarted", {
 
-  template_folder <- system.file("example", package = "FLAREr")
+  template_folder <- system.file("example", package = "FLARErLER")
 
   source(file.path(template_folder, "R", "test_enkf_prep_ler_restart_GLM.R"))
   config$output_settings$diagnostics_names <- NULL
 
 
   #Run EnKF
-  enkf_output <- FLAREr::run_da_forecast_ler(states_init = init$states,
+  enkf_output <- FLARErLER::run_da_forecast_ler(states_init = init$states,
                                              pars_init = init$pars,
                                              aux_states_init = init$aux_states_init,
                                              obs = obs,
@@ -465,17 +465,17 @@ test_that("LER-GLM can be restarted", {
   )
 
   # Save forecast
-  saved_file <- FLAREr::write_forecast_netcdf(da_forecast_output = enkf_output,
+  saved_file <- FLARErLER::write_forecast_netcdf(da_forecast_output = enkf_output,
                                               forecast_output_directory = config$file_path$forecast_output_directory)
-  FLAREr::create_flare_metadata(file_name = saved_file,
+  FLARErLER::create_flare_metadata(file_name = saved_file,
                                 da_forecast_output = enkf_output)
-  FLAREr::plotting_general(file_name = saved_file,
+  FLARErLER::plotting_general(file_name = saved_file,
                            qaqc_data_directory = config$file_path$qaqc_data_directory)
 
 
   # Begin restart ----
 
-  config <- FLAREr::update_run_config(config = config, lake_directory =  lake_directory, configure_run_file =  configure_run_file, saved_file = saved_file, new_horizon = 2)
+  config <- FLARErLER::update_run_config(config = config, lake_directory =  lake_directory, configure_run_file =  configure_run_file, saved_file = saved_file, new_horizon = 2)
 
   config$run_config
   # Rename restart dir
@@ -485,21 +485,21 @@ test_that("LER-GLM can be restarted", {
                                                   config$run_config$sim_name)
   dir.create(config$file_path$execute_directory, recursive = TRUE)
 
-  noaa_forecast_path <- FLAREr::get_driver_forecast_path(config,
+  noaa_forecast_path <- FLARErLER::get_driver_forecast_path(config,
                                                          forecast_model = config$met$forecast_met_model)
 
-  inflow_forecast_path <- FLAREr::get_driver_forecast_path(config,
+  inflow_forecast_path <- FLARErLER::get_driver_forecast_path(config,
                                                            forecast_model = config$inflow$forecast_inflow_model)
 
   if(!is.null(noaa_forecast_path)){
-    # FLAREr::get_driver_forecast(lake_directory, forecast_path = noaa_forecast_path)
+    # FLARErLER::get_driver_forecast(lake_directory, forecast_path = noaa_forecast_path)
     forecast_dir <- file.path(config$file_path$noaa_directory, noaa_forecast_path)
   }else{
     forecast_dir <- NULL
   }
 
   #Step up Drivers
-  met_out <- FLAREr::generate_met_files(obs_met_file = observed_met_file,
+  met_out <- FLARErLER::generate_met_files(obs_met_file = observed_met_file,
                                         out_dir = config$file_path$execute_directory,
                                         forecast_dir = forecast_dir,
                                         config = config)
@@ -509,7 +509,7 @@ test_that("LER-GLM can be restarted", {
 
   inflow_forecast_path <- config$file_path$inflow_directory
 
-  inflow_outflow_files <- FLAREr::create_inflow_outflow_files(inflow_file_dir = inflow_file_dir,
+  inflow_outflow_files <- FLARErLER::create_inflow_outflow_files(inflow_file_dir = inflow_file_dir,
                                                               inflow_obs = cleaned_inflow_file,
                                                               working_directory = config$file_path$execute_directory,
                                                               config,
@@ -518,16 +518,16 @@ test_that("LER-GLM can be restarted", {
   inflow_file_names <- inflow_outflow_files$inflow_file_name
   outflow_file_names <- inflow_outflow_files$outflow_file_name
 
-  obs <- FLAREr::create_obs_matrix(cleaned_observations_file_long,
+  obs <- FLARErLER::create_obs_matrix(cleaned_observations_file_long,
                                    obs_config,
                                    config)
 
-  states_config <- FLAREr::generate_states_to_obs_mapping(states_config, obs_config)
+  states_config <- FLARErLER::generate_states_to_obs_mapping(states_config, obs_config)
 
-  model_sd <- FLAREr::initiate_model_error(config, states_config)
+  model_sd <- FLARErLER::initiate_model_error(config, states_config)
 
 
-  init <- FLAREr::generate_initial_conditions(states_config,
+  init <- FLARErLER::generate_initial_conditions(states_config,
                                               obs_config,
                                               pars_config,
                                               obs,
@@ -535,7 +535,7 @@ test_that("LER-GLM can be restarted", {
 
 
   #Run EnKF
-  enkf_output <- FLAREr::run_da_forecast_ler(states_init = init$states,
+  enkf_output <- FLARErLER::run_da_forecast_ler(states_init = init$states,
                                              pars_init = init$pars,
                                              aux_states_init = init$aux_states_init,
                                              obs = obs,
@@ -556,18 +556,18 @@ test_that("LER-GLM can be restarted", {
   )
 
   # Save forecast
-  saved_file <- FLAREr::write_forecast_netcdf(da_forecast_output = enkf_output,
+  saved_file <- FLARErLER::write_forecast_netcdf(da_forecast_output = enkf_output,
                                               forecast_output_directory = config$file_path$forecast_output_directory)
 
   testthat::expect_true(file.exists(saved_file))
 
   #Create EML Metadata
-  FLAREr::create_flare_metadata(file_name = saved_file,
+  FLARErLER::create_flare_metadata(file_name = saved_file,
                                 da_forecast_output = enkf_output)
   file_chk <- list.files(config$file_path$forecast_output_directory, pattern = ".xml")
   testthat::expect_true(length(file_chk) > 1)
 
-  FLAREr::plotting_general(file_name = saved_file,
+  FLARErLER::plotting_general(file_name = saved_file,
                            qaqc_data_directory = config$file_path$qaqc_data_directory)
   file_chk <- list.files(config$file_path$forecast_output_directory, pattern = ".pdf")
   testthat::expect_true(length(file_chk) > 1)
@@ -576,14 +576,14 @@ test_that("LER-GLM can be restarted", {
 # LER-GOTM can be restarted ----
 test_that("LER-GOTM can be restarted", {
 
-  template_folder <- system.file("example", package = "FLAREr")
+  template_folder <- system.file("example", package = "FLARErLER")
 
   source(file.path(template_folder, "R", "test_enkf_prep_ler_restart_GOTM.R"))
   config$output_settings$diagnostics_names <- NULL
 
 
   #Run EnKF
-  enkf_output <- FLAREr::run_da_forecast_ler(states_init = init$states,
+  enkf_output <- FLARErLER::run_da_forecast_ler(states_init = init$states,
                                              pars_init = init$pars,
                                              aux_states_init = init$aux_states_init,
                                              obs = obs,
@@ -604,17 +604,17 @@ test_that("LER-GOTM can be restarted", {
   )
 
   # Save forecast
-  saved_file <- FLAREr::write_forecast_netcdf(da_forecast_output = enkf_output,
+  saved_file <- FLARErLER::write_forecast_netcdf(da_forecast_output = enkf_output,
                                               forecast_output_directory = config$file_path$forecast_output_directory)
-  FLAREr::create_flare_metadata(file_name = saved_file,
+  FLARErLER::create_flare_metadata(file_name = saved_file,
                                 da_forecast_output = enkf_output)
-  FLAREr::plotting_general(file_name = saved_file,
+  FLARErLER::plotting_general(file_name = saved_file,
                            qaqc_data_directory = config$file_path$qaqc_data_directory)
 
 
   # Begin restart ----
 
-  config <- FLAREr::update_run_config(config = config, lake_directory =  lake_directory, configure_run_file =  configure_run_file, saved_file = saved_file, new_horizon = 2)
+  config <- FLARErLER::update_run_config(config = config, lake_directory =  lake_directory, configure_run_file =  configure_run_file, saved_file = saved_file, new_horizon = 2)
 
   config$run_config
   # Rename restart dir
@@ -624,21 +624,21 @@ test_that("LER-GOTM can be restarted", {
                                                   config$run_config$sim_name)
   dir.create(config$file_path$execute_directory, recursive = TRUE)
 
-  noaa_forecast_path <- FLAREr::get_driver_forecast_path(config,
+  noaa_forecast_path <- FLARErLER::get_driver_forecast_path(config,
                                                          forecast_model = config$met$forecast_met_model)
 
-  inflow_forecast_path <- FLAREr::get_driver_forecast_path(config,
+  inflow_forecast_path <- FLARErLER::get_driver_forecast_path(config,
                                                            forecast_model = config$inflow$forecast_inflow_model)
 
   if(!is.null(noaa_forecast_path)){
-    # FLAREr::get_driver_forecast(lake_directory, forecast_path = noaa_forecast_path)
+    # FLARErLER::get_driver_forecast(lake_directory, forecast_path = noaa_forecast_path)
     forecast_dir <- file.path(config$file_path$noaa_directory, noaa_forecast_path)
   }else{
     forecast_dir <- NULL
   }
 
   #Step up Drivers
-  met_out <- FLAREr::generate_met_files(obs_met_file = observed_met_file,
+  met_out <- FLARErLER::generate_met_files(obs_met_file = observed_met_file,
                                         out_dir = config$file_path$execute_directory,
                                         forecast_dir = forecast_dir,
                                         config = config)
@@ -648,7 +648,7 @@ test_that("LER-GOTM can be restarted", {
 
   inflow_forecast_path <- config$file_path$inflow_directory
 
-  inflow_outflow_files <- FLAREr::create_inflow_outflow_files(inflow_file_dir = inflow_file_dir,
+  inflow_outflow_files <- FLARErLER::create_inflow_outflow_files(inflow_file_dir = inflow_file_dir,
                                                               inflow_obs = cleaned_inflow_file,
                                                               working_directory = config$file_path$execute_directory,
                                                               config,
@@ -657,16 +657,16 @@ test_that("LER-GOTM can be restarted", {
   inflow_file_names <- inflow_outflow_files$inflow_file_name
   outflow_file_names <- inflow_outflow_files$outflow_file_name
 
-  obs <- FLAREr::create_obs_matrix(cleaned_observations_file_long,
+  obs <- FLARErLER::create_obs_matrix(cleaned_observations_file_long,
                                    obs_config,
                                    config)
 
-  states_config <- FLAREr::generate_states_to_obs_mapping(states_config, obs_config)
+  states_config <- FLARErLER::generate_states_to_obs_mapping(states_config, obs_config)
 
-  model_sd <- FLAREr::initiate_model_error(config, states_config)
+  model_sd <- FLARErLER::initiate_model_error(config, states_config)
 
 
-  init <- FLAREr::generate_initial_conditions(states_config,
+  init <- FLARErLER::generate_initial_conditions(states_config,
                                               obs_config,
                                               pars_config,
                                               obs,
@@ -674,7 +674,7 @@ test_that("LER-GOTM can be restarted", {
 
 
   #Run EnKF
-  enkf_output <- FLAREr::run_da_forecast_ler(states_init = init$states,
+  enkf_output <- FLARErLER::run_da_forecast_ler(states_init = init$states,
                                              pars_init = init$pars,
                                              aux_states_init = init$aux_states_init,
                                              obs = obs,
@@ -695,18 +695,18 @@ test_that("LER-GOTM can be restarted", {
   )
 
   # Save forecast
-  saved_file <- FLAREr::write_forecast_netcdf(da_forecast_output = enkf_output,
+  saved_file <- FLARErLER::write_forecast_netcdf(da_forecast_output = enkf_output,
                                               forecast_output_directory = config$file_path$forecast_output_directory)
 
   testthat::expect_true(file.exists(saved_file))
 
   #Create EML Metadata
-  FLAREr::create_flare_metadata(file_name = saved_file,
+  FLARErLER::create_flare_metadata(file_name = saved_file,
                                 da_forecast_output = enkf_output)
   file_chk <- list.files(config$file_path$forecast_output_directory, pattern = ".xml")
   testthat::expect_true(length(file_chk) > 1)
 
-  FLAREr::plotting_general(file_name = saved_file,
+  FLARErLER::plotting_general(file_name = saved_file,
                            qaqc_data_directory = config$file_path$qaqc_data_directory)
   file_chk <- list.files(config$file_path$forecast_output_directory, pattern = ".pdf")
   testthat::expect_true(length(file_chk) > 1)
@@ -715,14 +715,14 @@ test_that("LER-GOTM can be restarted", {
 # LER-Simstrat can be restarted ----
 test_that("LER-Simstrat can be restarted", {
 
-  template_folder <- system.file("example", package = "FLAREr")
+  template_folder <- system.file("example", package = "FLARErLER")
 
   source(file.path(template_folder, "R", "test_enkf_prep_ler_restart_Simstrat.R"))
   config$output_settings$diagnostics_names <- NULL
 
 
   #Run EnKF
-  enkf_output <- FLAREr::run_da_forecast_ler(states_init = init$states,
+  enkf_output <- FLARErLER::run_da_forecast_ler(states_init = init$states,
                                      pars_init = init$pars,
                                      aux_states_init = init$aux_states_init,
                                      obs = obs,
@@ -743,16 +743,16 @@ test_that("LER-Simstrat can be restarted", {
   )
 
   # Save forecast
-  saved_file <- FLAREr::write_forecast_netcdf(da_forecast_output = enkf_output,
+  saved_file <- FLARErLER::write_forecast_netcdf(da_forecast_output = enkf_output,
                                               forecast_output_directory = config$file_path$forecast_output_directory)
-  FLAREr::create_flare_metadata(file_name = saved_file,
+  FLARErLER::create_flare_metadata(file_name = saved_file,
                                 da_forecast_output = enkf_output)
-  FLAREr::plotting_general(file_name = saved_file,
+  FLARErLER::plotting_general(file_name = saved_file,
                            qaqc_data_directory = config$file_path$qaqc_data_directory)
 
 
   # Begin restart ----
-  config <- FLAREr::update_run_config(config = config, lake_directory =  lake_directory, configure_run_file =  configure_run_file, saved_file = saved_file, new_horizon = 2)
+  config <- FLARErLER::update_run_config(config = config, lake_directory =  lake_directory, configure_run_file =  configure_run_file, saved_file = saved_file, new_horizon = 2)
 
   config$run_config
   # Rename restart dir
@@ -762,21 +762,21 @@ test_that("LER-Simstrat can be restarted", {
                                                   config$run_config$sim_name)
   dir.create(config$file_path$execute_directory, recursive = TRUE)
 
-  noaa_forecast_path <- FLAREr::get_driver_forecast_path(config,
+  noaa_forecast_path <- FLARErLER::get_driver_forecast_path(config,
                                                          forecast_model = config$met$forecast_met_model)
 
-  inflow_forecast_path <- FLAREr::get_driver_forecast_path(config,
+  inflow_forecast_path <- FLARErLER::get_driver_forecast_path(config,
                                                            forecast_model = config$inflow$forecast_inflow_model)
 
   if(!is.null(noaa_forecast_path)){
-    # FLAREr::get_driver_forecast(lake_directory, forecast_path = noaa_forecast_path)
+    # FLARErLER::get_driver_forecast(lake_directory, forecast_path = noaa_forecast_path)
     forecast_dir <- file.path(config$file_path$noaa_directory, noaa_forecast_path)
   }else{
     forecast_dir <- NULL
   }
 
   #Step up Drivers
-  met_out <- FLAREr::generate_met_files(obs_met_file = observed_met_file,
+  met_out <- FLARErLER::generate_met_files(obs_met_file = observed_met_file,
                                         out_dir = config$file_path$execute_directory,
                                         forecast_dir = forecast_dir,
                                         config = config)
@@ -786,7 +786,7 @@ test_that("LER-Simstrat can be restarted", {
 
   inflow_forecast_path <- config$file_path$inflow_directory
 
-  inflow_outflow_files <- FLAREr::create_inflow_outflow_files(inflow_file_dir = inflow_file_dir,
+  inflow_outflow_files <- FLARErLER::create_inflow_outflow_files(inflow_file_dir = inflow_file_dir,
                                                               inflow_obs = cleaned_inflow_file,
                                                               working_directory = config$file_path$execute_directory,
                                                               config,
@@ -795,16 +795,16 @@ test_that("LER-Simstrat can be restarted", {
   inflow_file_names <- inflow_outflow_files$inflow_file_name
   outflow_file_names <- inflow_outflow_files$outflow_file_name
 
-  obs <- FLAREr::create_obs_matrix(cleaned_observations_file_long,
+  obs <- FLARErLER::create_obs_matrix(cleaned_observations_file_long,
                                    obs_config,
                                    config)
 
-  states_config <- FLAREr::generate_states_to_obs_mapping(states_config, obs_config)
+  states_config <- FLARErLER::generate_states_to_obs_mapping(states_config, obs_config)
 
-  model_sd <- FLAREr::initiate_model_error(config, states_config)
+  model_sd <- FLARErLER::initiate_model_error(config, states_config)
 
 
-  init <- FLAREr::generate_initial_conditions(states_config,
+  init <- FLARErLER::generate_initial_conditions(states_config,
                                               obs_config,
                                               pars_config,
                                               obs,
@@ -812,7 +812,7 @@ test_that("LER-Simstrat can be restarted", {
 
 
   #Run EnKF
-  enkf_output <- FLAREr::run_da_forecast_ler(states_init = init$states,
+  enkf_output <- FLARErLER::run_da_forecast_ler(states_init = init$states,
                                              pars_init = init$pars,
                                              aux_states_init = init$aux_states_init,
                                              obs = obs,
@@ -833,18 +833,18 @@ test_that("LER-Simstrat can be restarted", {
   )
 
   # Save forecast
-  saved_file <- FLAREr::write_forecast_netcdf(da_forecast_output = enkf_output,
+  saved_file <- FLARErLER::write_forecast_netcdf(da_forecast_output = enkf_output,
                                               forecast_output_directory = config$file_path$forecast_output_directory)
 
   testthat::expect_true(file.exists(saved_file))
 
   #Create EML Metadata
-  FLAREr::create_flare_metadata(file_name = saved_file,
+  FLARErLER::create_flare_metadata(file_name = saved_file,
                                 da_forecast_output = enkf_output)
   file_chk <- list.files(config$file_path$forecast_output_directory, pattern = ".xml")
   testthat::expect_true(length(file_chk) > 1)
 
-  FLAREr::plotting_general(file_name = saved_file,
+  FLARErLER::plotting_general(file_name = saved_file,
                            qaqc_data_directory = config$file_path$qaqc_data_directory)
   file_chk <- list.files(config$file_path$forecast_output_directory, pattern = ".pdf")
   testthat::expect_true(length(file_chk) > 1)
@@ -853,18 +853,18 @@ test_that("LER-Simstrat can be restarted", {
 # LER-GOTM-EnKF with fail ----
 test_that("LER-GOTM-EnKF can fail and write output", {
 
-  template_folder <- system.file("example", package = "FLAREr")
+  template_folder <- system.file("example", package = "FLARErLER")
 
   source(file.path(template_folder, "R", "test_enkf_prep_ler.R"))
   config$model_settings$model <- "GOTM"
   config$output_settings$diagnostics_names <- NULL
   config$run_config$restart_file <- NA
 
-  obs <- FLAREr::create_obs_matrix(cleaned_observations_file_long,
+  obs <- FLARErLER::create_obs_matrix(cleaned_observations_file_long,
                                    obs_config,
                                    config)
 
-  init <- FLAREr::generate_initial_conditions(states_config,
+  init <- FLARErLER::generate_initial_conditions(states_config,
                                               obs_config,
                                               pars_config,
                                               obs,
@@ -894,7 +894,7 @@ test_that("LER-GOTM-EnKF can fail and write output", {
   # debug = FALSE
 
   #Run EnKF
-  enkf_output <- FLAREr::run_da_forecast_all(states_init = init$states,
+  enkf_output <- FLARErLER::run_da_forecast_all(states_init = init$states,
                                              pars_init = init$pars,
                                              aux_states_init = init$aux_states_init,
                                              obs = obs,
@@ -925,17 +925,17 @@ test_that("LER-GOTM-EnKF can fail and write output", {
   testthat::expect_true(all(unlist(chk)))
 
   # Save forecast
-  saved_file <- FLAREr::write_forecast_netcdf(da_forecast_output = enkf_output,
+  saved_file <- FLARErLER::write_forecast_netcdf(da_forecast_output = enkf_output,
                                               forecast_output_directory = config$file_path$forecast_output_directory)
   testthat::expect_true(file.exists(saved_file))
 
   #Create EML Metadata
-  FLAREr::create_flare_metadata(file_name = saved_file,
+  FLARErLER::create_flare_metadata(file_name = saved_file,
                                 da_forecast_output = enkf_output)
   file_chk <- list.files(config$file_path$forecast_output_directory, pattern = ".xml")
   testthat::expect_true(length(file_chk) > 0)
 
-  FLAREr::plotting_general(file_name = saved_file,
+  FLARErLER::plotting_general(file_name = saved_file,
                            qaqc_data_directory = config$file_path$qaqc_data_directory)
   file_chk <- list.files(config$file_path$forecast_output_directory, pattern = ".pdf")
   testthat::expect_true(length(file_chk) > 0)

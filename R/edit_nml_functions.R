@@ -161,7 +161,7 @@ get_glm_nc_var_all_wq <- function(ncFile,working_dir, z_out,vars_depth, vars_no_
 
   ncdf4::nc_close(glm_nc)
 
-  restart_vars <- FLAREr:::read_restart(working_dir, model = "GLM")
+  restart_vars <- FLARErLER:::read_restart(working_dir, model = "GLM")
 
   return(list(output = output,
               output_no_depth = output_no_depth,

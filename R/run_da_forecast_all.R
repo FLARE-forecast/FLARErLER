@@ -37,7 +37,7 @@
 #' @importFrom GLM3r glm_version
 #' @examples
 ##' \dontrun{
-#' da_forecast_output <- FLAREr::run_da_forecast(states_init = init$states, pars_init = init$pars, aux_states_init = init$aux_states_init, obs = obs, obs_sd = obs_config$obs_sd, model_sd = model_sd, working_directory = config$file_path$execute_directory, met_file_names = met_file_names, inflow_file_names = inflow_file_names, outflow_file_names = outflow_file_names, config = config, pars_config = pars_config, states_config = states_config, obs_config = obs_config)
+#' da_forecast_output <- FLARErLER::run_da_forecast(states_init = init$states, pars_init = init$pars, aux_states_init = init$aux_states_init, obs = obs, obs_sd = obs_config$obs_sd, model_sd = model_sd, working_directory = config$file_path$execute_directory, met_file_names = met_file_names, inflow_file_names = inflow_file_names, outflow_file_names = outflow_file_names, config = config, pars_config = pars_config, states_config = states_config, obs_config = obs_config)
 #' }
 
 run_da_forecast_all <- function(states_init,
@@ -59,7 +59,7 @@ run_da_forecast_all <- function(states_init,
                                 par_fit_method = "inflate",
                                 debug = FALSE) {
   if(config$model_settings$use_ler) {
-    FLAREr::run_da_forecast_ler(states_init = states_init,
+    FLARErLER::run_da_forecast_ler(states_init = states_init,
                                 pars_init = pars_init,
                                 aux_states_init = aux_states_init,
                                 obs = obs,
@@ -78,7 +78,7 @@ run_da_forecast_all <- function(states_init,
                                 par_fit_method = par_fit_method,
                                 debug = debug)
   } else {
-    FLAREr::run_da_forecast(states_init = states_init,
+    FLARErLER::run_da_forecast(states_init = states_init,
                             pars_init = pars_init,
                             aux_states_init = aux_states_init,
                             obs = obs,

@@ -32,7 +32,7 @@ plotting_general <- function(file_name,
   target_file <- paste0(qaqc_data_directory,"/observations_postQAQC_long.csv")
 
 
-  output <- FLAREr::combine_forecast_observations(file_name,
+  output <- FLARErLER::combine_forecast_observations(file_name,
                                                   target_file,
                                                   extra_historical_days = 0,
                                                   ncore = ncore)

@@ -148,7 +148,7 @@ run_model_ler <- function(model,
 
       if(simulate_sss){
         if(is.na(management$specified_sss_inflow_file)){
-          FLAREr:::create_sss_input_output(x = x_start,
+          FLARErLER:::create_sss_input_output(x = x_start,
                                           i,
                                           m,
                                           full_time,
@@ -318,11 +318,11 @@ run_model_ler <- function(model,
 
 
   if(model == "GLM" & include_wq){
-    FLAREr:::update_nml(update_aed_nml_list,
+    FLARErLER:::update_nml(update_aed_nml_list,
                        update_aed_nml_names,
                        working_directory,
                        "aed2.nml")
-    FLAREr:::update_nml(update_phyto_nml_list,
+    FLARErLER:::update_nml(update_phyto_nml_list,
                        update_phyto_nml_names,
                        working_directory,
                        "aed2_phyto_pars.nml")
@@ -364,7 +364,7 @@ run_model_ler <- function(model,
     old_output <- list.files(file.path(working_directory, model, "output"))
     unlink(file.path(working_directory, model, "output", old_output), recursive = TRUE)
 
-    model_states <- FLAREr:::run_models_ler(model = model,
+    model_states <- FLARErLER:::run_models_ler(model = model,
                           folder = working_directory,
                           verbose = FALSE,
                           restart = restart,
@@ -373,7 +373,7 @@ run_model_ler <- function(model,
                           model_depths = modeled_depths)
 
     fils <- list.files(file.path(working_directory, model, "output"))
-    run_success <- FLAREr:::check_model_output(folder = working_directory, model = model)
+    run_success <- FLARErLER:::check_model_output(folder = working_directory, model = model)
 
 
     if(length(fils) != 0 & run_success) { #&
@@ -386,7 +386,7 @@ run_model_ler <- function(model,
         output_vars_no_depth <- NA
 
         # LakeEnsemblR Output
-        ler_temp_out <- FLAREr:::get_ler_var_all(model = model,
+        ler_temp_out <- FLARErLER:::get_ler_var_all(model = model,
                                                   working_dir = working_directory,
                                                   z_out = modeled_depths,
                                                   vars_depth = output_vars_multi_depth,

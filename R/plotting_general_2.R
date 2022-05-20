@@ -30,7 +30,7 @@ plotting_general_2 <- function(file_name,
   csv_file_name <- paste0(tools::file_path_sans_ext(file_name),".csv")
 
 
-  output <- FLAREr::combine_forecast_observations(file_name,
+  output <- FLARErLER::combine_forecast_observations(file_name,
                                                   target_file,
                                                   extra_historical_days = 0,
                                                   ncore = ncore)

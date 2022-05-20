@@ -155,7 +155,7 @@ run_model <- function(i,
 
     if(simulate_sss){
       if(is.na(management$specified_sss_inflow_file)){
-        FLAREr:::create_sss_input_output(x = x_start,
+        FLARErLER:::create_sss_input_output(x = x_start,
                                          i,
                                          m,
                                          full_time,
@@ -261,20 +261,20 @@ run_model <- function(i,
   }
 
 
-  FLAREr:::update_nml(var_list = update_glm_nml_list,
+  FLARErLER:::update_nml(var_list = update_glm_nml_list,
                       var_name_list = update_glm_nml_names,
                       working_directory,
                       nml = "glm3.nml")
 
   if(list_index_aed > 1){
-    FLAREr:::update_nml(update_aed_nml_list,
+    FLARErLER:::update_nml(update_aed_nml_list,
                         update_aed_nml_names,
                         working_directory,
                         "aed2.nml")
   }
 
   if(list_index_phyto > 1){
-    FLAREr:::update_nml(update_phyto_nml_list,
+    FLARErLER:::update_nml(update_phyto_nml_list,
                         update_phyto_nml_names,
                         working_directory,
                         "aed2_phyto_pars.nml")
@@ -368,7 +368,7 @@ run_model <- function(i,
       output_vars_multi_depth <- state_names
       output_vars_no_depth <- NA
 
-      GLM_temp_wq_out <-  FLAREr:::get_glm_nc_var_all_wq(ncFile = "/output.nc",
+      GLM_temp_wq_out <-  FLARErLER:::get_glm_nc_var_all_wq(ncFile = "/output.nc",
                                                          working_dir = working_directory,
                                                          z_out = modeled_depths,
                                                          vars_depth = output_vars_multi_depth,

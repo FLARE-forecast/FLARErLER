@@ -37,7 +37,7 @@
 #' @importFrom GLM3r glm_version
 #' @examples
 ##' \dontrun{
-#' da_forecast_output <- FLAREr::run_da_forecast(states_init = init$states, pars_init = init$pars, aux_states_init = init$aux_states_init, obs = obs, obs_sd = obs_config$obs_sd, model_sd = model_sd, working_directory = config$file_path$execute_directory, met_file_names = met_file_names, inflow_file_names = inflow_file_names, outflow_file_names = outflow_file_names, config = config, pars_config = pars_config, states_config = states_config, obs_config = obs_config)
+#' da_forecast_output <- FLARErLER::run_da_forecast(states_init = init$states, pars_init = init$pars, aux_states_init = init$aux_states_init, obs = obs, obs_sd = obs_config$obs_sd, model_sd = model_sd, working_directory = config$file_path$execute_directory, met_file_names = met_file_names, inflow_file_names = inflow_file_names, outflow_file_names = outflow_file_names, config = config, pars_config = pars_config, states_config = states_config, obs_config = obs_config)
 #' }
 
 run_da_forecast <- function(states_init,
@@ -115,7 +115,7 @@ run_da_forecast <- function(states_init,
   states_config$wq_start <- wq_start
   states_config$wq_end <- wq_end
 
-  FLAREr:::check_enkf_inputs(states_init,
+  FLARErLER:::check_enkf_inputs(states_init,
                              pars_init,
                              obs,
                              psi,
@@ -199,7 +199,7 @@ run_da_forecast <- function(states_init,
       unlink(file.path(working_directory, "1"), recursive = TRUE)
       dir.create(file.path(working_directory, "1"), showWarnings = FALSE)
     }
-    FLAREr:::set_up_model(config,
+    FLARErLER:::set_up_model(config,
                           ens_working_directory = file.path(working_directory,"1"),
                           state_names = states_config$state_names,
                           inflow_file_names = inflow_file_names,
@@ -212,7 +212,7 @@ run_da_forecast <- function(states_init,
         unlink(file.path(working_directory, m), recursive = TRUE)
         dir.create(file.path(working_directory, m), showWarnings = FALSE)
       }
-      FLAREr:::set_up_model(config,
+      FLARErLER:::set_up_model(config,
                             ens_working_directory = file.path(working_directory, m),
                             state_names = states_config$state_names,
                             inflow_file_names = inflow_file_names,
@@ -309,7 +309,7 @@ run_da_forecast <- function(states_init,
     if(i == start_step) {
       if(machine == "windows") {
         cl <- parallel::makeCluster(config$model_settings$ncore, setup_strategy = "sequential")
-        parallel::clusterEvalQ(cl, library(FLAREr))
+        parallel::clusterEvalQ(cl, library(FLARErLER))
       } else {
         cl <- parallel::makeCluster(config$model_settings$ncore, setup_strategy = "sequential")
       }
@@ -417,7 +417,7 @@ run_da_forecast <- function(states_init,
         # restart_list = restart_list
         # debug = debug
 
-        out <- FLAREr:::run_model(i,
+        out <- FLARErLER:::run_model(i,
                                  m,
                                  curr_start,
                                  curr_stop,
