@@ -1,4 +1,4 @@
 library(testthat)
-library(FLAREr)
+library(FLARErLER)
 
-test_check("FLAREr")
+test_check("FLARErLER")
