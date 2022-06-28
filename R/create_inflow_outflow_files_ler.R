@@ -5,11 +5,9 @@
 #' @param working_directory string; full directory where FLARE executes
 #' @param state_names vector; vector of state names that will be included in the inflow files
 #' @return list with two vectors. One vector is the matrix of inflow_file_names and the other is the matrix of outflow_file_names
-
-#' @noRd
-#'
+#' @export
 #' @examples
-create_ler_inflow_outflow_files <- function(inflow_file_dir = NULL,
+create_inflow_outflow_files_ler <- function(inflow_file_dir = NULL,
                                             inflow_obs,
                                             working_directory,
                                             config,
@@ -163,7 +161,7 @@ create_ler_inflow_outflow_files <- function(inflow_file_dir = NULL,
     num_outflows <- max(obs_outflow$outflow_num)
   }
 
-  outflow_file_names <- array(NA, dim = c(length(outflow_files),num_outflows))
+  outflow_file_names <- array(NA, dim = c(max(c(1, length(outflow_files))),num_outflows))
 
   for(j in 1:num_outflows){
 

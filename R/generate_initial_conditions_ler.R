@@ -14,7 +14,7 @@
 #' \dontrun{
 #'   init <- generate_initial_conditions(states_config, obs_config, pars_config, obs, config, restart_file = config$run_config$restart_file, historical_met_error = met_out$historical_met_error)
 #'   }
-generate_initial_conditions <- function(states_config,
+generate_initial_conditions_ler <- function(states_config,
                                         obs_config,
                                         pars_config = NULL,
                                         obs,
@@ -146,7 +146,7 @@ generate_initial_conditions <- function(states_config,
                  aux_states_init = aux_states_init)
 
   } else {
-    nc <- ncdf4::nc_open(file.path(config$file_path$forecast_output_directory, config$run_config$restart_file))
+    nc <- ncdf4::nc_open(config$run_config$restart_file)
     forecast <- ncdf4::ncvar_get(nc, "forecast")
     ncdf4::nc_close(nc)
     if(historical_met_error){
@@ -158,7 +158,7 @@ generate_initial_conditions <- function(states_config,
       restart_index <- max(which(forecast == 0))
     }
 
-    out <- FLARErLER:::generate_restart_initial_conditions(
+    out <- FLARErLER:::generate_restart_initial_conditions_ler(
       restart_file = config$run_config$restart_file,
       state_names = states_config$state_names,
       par_names = pars_config$par_names_save,

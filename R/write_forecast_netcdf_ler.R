@@ -16,7 +16,7 @@
 ##' }
 ##'
 
-write_forecast_netcdf <- function(da_forecast_output,
+write_forecast_netcdf_ler <- function(da_forecast_output,
                                   forecast_output_directory,
                                   use_short_filename = TRUE,
                                   add = FALSE){
@@ -24,6 +24,7 @@ write_forecast_netcdf <- function(da_forecast_output,
   dir.create(forecast_output_directory, recursive = TRUE, showWarnings = FALSE)
 
   x <- da_forecast_output$x
+  pars <- da_forecast_output$pars
   data_assimilation_flag <- da_forecast_output$data_assimilation_flag
   forecast_flag <- da_forecast_output$forecast_flag
   da_qc_flag <- da_forecast_output$da_qc_flag
@@ -42,11 +43,9 @@ write_forecast_netcdf <- function(da_forecast_output,
     avg_surf_temp <- da_forecast_output$restart_list$avg_surf_temp
     restart_variables <- da_forecast_output$restart_list$restart_variables
     model_internal_depths <- da_forecast_output$restart_list$model_internal_depths
-    salt <- da_forecast_output$restart_list$the_sals
 
   } else if(config$model_settings$model == "GOTM") {
     z <- da_forecast_output$restart_list$z_vars$z
-    salt <- da_forecast_output$restart_list$z_vars$salt
     u <- da_forecast_output$restart_list$z_vars$u
     uo <- da_forecast_output$restart_list$z_vars$uo
     v <- da_forecast_output$restart_list$z_vars$v
@@ -68,7 +67,6 @@ write_forecast_netcdf <- function(da_forecast_output,
     u <- da_forecast_output$restart_list$u
     v <- da_forecast_output$restart_list$v
     temp <- da_forecast_output$restart_list$temp
-    S <- da_forecast_output$restart_list$S
     k <- da_forecast_output$restart_list$k
     eps <- da_forecast_output$restart_list$eps
     num <- da_forecast_output$restart_list$num
@@ -101,16 +99,13 @@ write_forecast_netcdf <- function(da_forecast_output,
     npars <- 0
   }
 
-  nstates <- dim(da_forecast_output$x)[3] - npars
-
-  x_efi <- aperm(x, c(1,3,2))
+  x_efi <- aperm(x, c(1,3,4,2))
   diagnostics_efi <- diagnostics
 
   #Set dimensionsda_forecast_output
-  ens <- seq(1,dim(x)[2],1)
+  ens <- seq(1,dim(x)[4],1)
   depths <- config$model_settings$modeled_depths
   t <- as.numeric(as.POSIXct(lubridate::with_tz(full_time),origin = '1970-01-01 00:00.00 UTC'))
-  states <- seq(1,nstates,1)
   #obs_states <- seq(1,dim(obs)[3],1)
 
   #Set variable that states whether value is forecasted
@@ -171,10 +166,10 @@ write_forecast_netcdf <- function(da_forecast_output,
     index <- index + 1
     def_list[[index]] <- ncdf4::ncvar_def("model_internal_depths","meter",list(timedim, internal_model_depths_dim, ensdim), fillvalue, longname = "depths simulated by glm that are required to restart ",prec="single")
     index <- index + 1
-    def_list[[index]] <- ncdf4::ncvar_def("salt","g_kg",list(timedim, depthdim, ensdim),fillvalue,longname = "salt",prec="single")
+    def_list[[index]] <- ncdf4::ncvar_def("salt","g_kg",list(timedim, depthdim, ensdim),fillvalue,longname = "state:salt",prec="single")
   } else if(config$model_settings$model ==  "GOTM") {
     # z vars
-    def_list[[index]] <- ncdf4::ncvar_def("salt","g/kg", list(timedim, zdim, ensdim), missval = -99,longname = 'salinity',prec="single")
+    def_list[[index]] <- ncdf4::ncvar_def("salt","g_kg", list(timedim, depthdim, ensdim), missval = -99,longname = 'state:salt',prec="single")
     index <- index + 1
     def_list[[index]] <- ncdf4::ncvar_def("u","m/s", list(timedim, zdim, ensdim), missval = -99, longname = 'x-velocity',prec="single")
     index <- index + 1
@@ -212,7 +207,7 @@ write_forecast_netcdf <- function(da_forecast_output,
     index <- index + 1
     def_list[[index]] <- ncdf4::ncvar_def("simstrat_temp", "degC", list(timedim, zidim, ensdim), missval = -99, longname = "temperature (Simstrat)", prec = "single")
     index <- index + 1
-    def_list[[index]] <- ncdf4::ncvar_def("S", "g/kg", list(timedim, zidim, ensdim), missval = -99, longname = "salinity", prec = "single")
+    def_list[[index]] <- ncdf4::ncvar_def("salt", "g/kg", list(timedim, depthdim, ensdim), missval = -99, longname = "state:salt", prec = "single")
     index <- index + 1
     def_list[[index]] <- ncdf4::ncvar_def("k", "J/kg", list(timedim, zidim, ensdim), missval = -99, longname = "turbulent kinetic energy", prec = "single")
     index <- index + 1
@@ -252,7 +247,7 @@ write_forecast_netcdf <- function(da_forecast_output,
 
   if(length(config$output_settings$diagnostics_names) > 0){
     for(s in 1:length(config$output_settings$diagnostics_names)){
-      def_list[[index+npars+length(states_config$state_names)-1 + s]]<- ncdf4::ncvar_def(config$output_settings$diagnostics_names[s],"-",list(timedim,depthdim, ensdim),fillvalue,paste0("diagnostic:",config$output_settings$diagnostics_names[s]),prec="single")
+      def_list[[index+npars+length(states_config$state_names)-2 + s]]<- ncdf4::ncvar_def(config$output_settings$diagnostics_names[s],"-",list(timedim,depthdim, ensdim),fillvalue,paste0("diagnostic:",config$output_settings$diagnostics_names[s]),prec="single")
     }
   }
 
@@ -277,7 +272,7 @@ write_forecast_netcdf <- function(da_forecast_output,
 
   # create netCDF file and put arrays
   index <- 1
-  ncdf4::ncvar_put(ncout, def_list[[index]] ,x_efi[,1:length(depths),])
+  ncdf4::ncvar_put(ncout, def_list[[index]] ,x_efi[,1:length(depths), , 1])
   index <- index + 1
   ncdf4::ncvar_put(ncout, def_list[[index]] ,as.array(data_assimilation_flag))
   index <- index + 1
@@ -305,7 +300,7 @@ write_forecast_netcdf <- function(da_forecast_output,
     ncdf4::ncvar_put(ncout, def_list[[index]], salt)
   } else if(config$model_settings$model ==  "GOTM") {
     # z vars
-    ncdf4::ncvar_put(ncout, def_list[[index]], salt)
+    ncdf4::ncvar_put(ncout, def_list[[index]], x_efi[,1:length(depths), , 2]) #Salt
     index <- index + 1
     ncdf4::ncvar_put(ncout, def_list[[index]], u)
     index <- index + 1
@@ -342,7 +337,7 @@ write_forecast_netcdf <- function(da_forecast_output,
     index <- index + 1
     ncdf4::ncvar_put(ncout, def_list[[index]], temp)
     index <- index + 1
-    ncdf4::ncvar_put(ncout, def_list[[index]], S)
+    ncdf4::ncvar_put(ncout, def_list[[index]], x_efi[,1:length(depths), , 2]) #Salt
     index <- index + 1
     ncdf4::ncvar_put(ncout, def_list[[index]], k)
     index <- index + 1
@@ -364,42 +359,42 @@ write_forecast_netcdf <- function(da_forecast_output,
 
   if(npars > 0){
     for(par in 1:npars){
-      ncdf4::ncvar_put(ncout,def_list[[index + par]] ,x[,,nstates + par])
+      ncdf4::ncvar_put(ncout,def_list[[index + par]] ,pars[, par, ])
     }
   }
 
-  if(config$include_wq){
-    for(s in 2:length(states_config$state_names)){
-      ncdf4::ncvar_put(ncout,def_list[[index+npars+s-1]],x_efi[,states_config$wq_start[s]:states_config$wq_end[s], ])
-    }
-  }
+  #if(config$include_wq){
+  #  for(s in 2:length(states_config$state_names)){
+  #    ncdf4::ncvar_put(ncout,def_list[[index+npars+s-1]],x_efi[,states_config$wq_start[s]:states_config$wq_end[s], ])
+  #  }
+  #}
 
   if(length(config$output_settings$diagnostics_names) > 0){
     for(s in 1:length(config$output_settings$diagnostics_names)){
-      ncdf4::ncvar_put(ncout, def_list[[index+npars+length(states_config$state_names) - 1 + s]],diagnostics_efi[s, , ,])
+      ncdf4::ncvar_put(ncout, def_list[[index+npars+length(states_config$state_names) - 2 + s]],diagnostics_efi[s, , ,])
     }
   }
 
-  tmp_index <- index+npars+length(states_config$state_names)+length(config$output_settings$diagnostics_names)-1
-  for(s in 1:length(obs_config$state_names_obs)){
-    if(!obs_config$state_names_obs[s] %in% states_config$state_names){
-      tmp_index <- tmp_index + 1
-      first_index <- 1
-      for(ii in 1:length(states_config$state_names)){
-        if(s %in% states_config$states_to_obs[[ii]]){
-          temp_index <- which(states_config$states_to_obs[[ii]] == s)
-          if(first_index == 1){
-            temp_var <- x_efi[, states_config$wq_start[ii]:states_config$wq_end[ii], ] * states_config$states_to_obs_mapping[[ii]][temp_index]
-            first_index <- 2
-          }else{
-            temp_var <- temp_var + x_efi[, states_config$wq_start[ii]:states_config$wq_end[ii], ] * states_config$states_to_obs_mapping[[ii]][temp_index]
-          }
-        }
-      }
-      ncdf4::ncvar_put(ncout,def_list[[tmp_index]] , temp_var)
-
-    }
-  }
+  #tmp_index <- index+npars+length(states_config$state_names)+length(config$output_settings$diagnostics_names)-1
+  # for(s in 1:length(obs_config$state_names_obs)){
+  #   if(!obs_config$state_names_obs[s] %in% states_config$state_names){
+  #     tmp_index <- tmp_index + 1
+  #     first_index <- 1
+  #     for(ii in 1:length(states_config$state_names)){
+  #       if(s %in% states_config$states_to_obs[[ii]]){
+  #         temp_index <- which(states_config$states_to_obs[[ii]] == s)
+  #         if(first_index == 1){
+  #           temp_var <- x_efi[, states_config$wq_start[ii]:states_config$wq_end[ii], ] * states_config$states_to_obs_mapping[[ii]][temp_index]
+  #           first_index <- 2
+  #         }else{
+  #           temp_var <- temp_var + x_efi[, states_config$wq_start[ii]:states_config$wq_end[ii], ] * states_config$states_to_obs_mapping[[ii]][temp_index]
+  #         }
+  #       }
+  #     }
+  #     ncdf4::ncvar_put(ncout,def_list[[tmp_index]] , temp_var)
+  #
+  #   }
+  # }
 
   time_of_forecast <- lubridate::with_tz(da_forecast_output$time_of_forecast, tzone = "UTC")
 

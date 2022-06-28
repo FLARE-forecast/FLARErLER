@@ -7,13 +7,12 @@
 #' @param end_datetime
 #' @param forecast_start_datetime
 #' @param local_tzone
-#'
+#' @export
 #' @importFrom zoo na.approx
 #' @return
-#' @noRd
 #'
 #' @examples
-generate_ler_met_files <- function(obs_met_file = NULL,
+generate_met_files_ler <- function(obs_met_file = NULL,
                                    out_dir,
                                    forecast_dir = NULL,
                                    config){

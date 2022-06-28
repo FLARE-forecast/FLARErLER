@@ -9,7 +9,7 @@
 #' @noRd
 #' @return list of initial conditions
 #'
-generate_restart_initial_conditions <- function(restart_file,
+generate_restart_initial_conditions_ler <- function(restart_file,
                                                 state_names,
                                                 par_names = NULL,
                                                 restart_index = NULL,
@@ -17,7 +17,7 @@ generate_restart_initial_conditions <- function(restart_file,
 
 
 
-  nc <- ncdf4::nc_open(file.path(config$file_path$forecast_output_directory, restart_file))
+  nc <- ncdf4::nc_open(restart_file)
   on.exit({
     ncdf4::nc_close(nc)
   })
@@ -41,14 +41,14 @@ generate_restart_initial_conditions <- function(restart_file,
     white_ice_thickness_restart <- ncdf4::ncvar_get(nc, "white_ice_thickness")[restart_index, ]
     blue_ice_thickness_restart <- ncdf4::ncvar_get(nc, "blue_ice_thickness")[restart_index, ]
     avg_surf_temp_restart <- ncdf4::ncvar_get(nc, "avg_surf_temp")[restart_index, ]
-    the_sals_restart <- ncdf4::ncvar_get(nc, "salt")[restart_index, , ]
+    #the_sals_restart <- ncdf4::ncvar_get(nc, "salt")[restart_index, , ]
 
     restart_variables_restart <- ncdf4::ncvar_get(nc, "restart_variables")[ ,restart_index, ]
     model_internal_depths  <- ncdf4::ncvar_get(nc, "model_internal_depths")[restart_index, , ]
 
     restart_list <- list(lake_depth = lake_depth_restart,
                          the_depths = the_depths,
-                         the_sals = the_sals_restart,
+                         #the_sals = the_sals_restart,
                          snow_thickness = snow_thickness_restart,
                          white_ice_thickness = white_ice_thickness_restart,
                          blue_ice_thickness = blue_ice_thickness_restart,
@@ -59,7 +59,7 @@ generate_restart_initial_conditions <- function(restart_file,
     # z variables
     z <- ncdf4::ncvar_get(nc, "z")
     temp <- ncdf4::ncvar_get(nc, "temp")[restart_index, , ]
-    salt <- ncdf4::ncvar_get(nc, "salt")[restart_index, , ]
+    #salt <- ncdf4::ncvar_get(nc, "salt")[restart_index, , ]
     u <- ncdf4::ncvar_get(nc, "u")[restart_index, , ]
     uo <- ncdf4::ncvar_get(nc, "uo")[restart_index, , ]
     v <- ncdf4::ncvar_get(nc, "v")[restart_index, , ]
@@ -79,7 +79,7 @@ generate_restart_initial_conditions <- function(restart_file,
 
     restart_list <- list(z_vars = list(z = z,
                                        temp = temp,
-                                       salt = salt,
+                                       #salt = salt,
                                        u = u,
                                        uo = uo,
                                        v = v,
@@ -100,7 +100,7 @@ generate_restart_initial_conditions <- function(restart_file,
     u <- ncdf4::ncvar_get(nc, "u")[restart_index, , ]
     v <- ncdf4::ncvar_get(nc, "v")[restart_index, , ]
     temp <- ncdf4::ncvar_get(nc, "temp")[restart_index, , ]
-    S <- ncdf4::ncvar_get(nc, "S")[restart_index, , ]
+    #S <- ncdf4::ncvar_get(nc, "S")[restart_index, , ]
     k <- ncdf4::ncvar_get(nc, "k")[restart_index, , ]
     eps <- ncdf4::ncvar_get(nc, "eps")[restart_index, , ]
     num <- ncdf4::ncvar_get(nc, "num")[restart_index, , ]
@@ -114,7 +114,7 @@ generate_restart_initial_conditions <- function(restart_file,
                          u = u,
                          v = v,
                          temp = temp,
-                         S = S,
+                         #S = S,
                          k = k,
                          eps = eps,
                          num = num,

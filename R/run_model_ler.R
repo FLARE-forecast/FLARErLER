@@ -28,11 +28,8 @@ run_model_ler <- function(model,
                       curr_pars,
                       working_directory,
                       par_file,
-                      num_phytos,
                       x_start,
                       full_time,
-                      wq_start,
-                      wq_end,
                       management = NULL,
                       hist_days,
                       modeled_depths,
@@ -69,18 +66,20 @@ run_model_ler <- function(model,
     model_depths_tmp <- model_depths_start[!is.na(model_depths_start)]
 
     # Initial temperature
-    the_temps_enkf_tmp <- x_start[1:ndepths_modeled]
+    the_temps_enkf_tmp <- x_start[1, ]
 
     the_temps <- approx(modeled_depths, the_temps_enkf_tmp, model_depths_tmp, rule = 2)$y
-    the_sals <- approx(modeled_depths, round(restart_list$the_sals[i-1, ,m ], 4), model_depths_tmp, rule = 2)$y
+    the_sals <- approx(modeled_depths, round(x_start[2, ]), model_depths_tmp, rule = 2)$y
 
     init_prof <- data.frame(Depth_meter = round(model_depths_tmp, 4),
                             Water_Temperature_celsius = round(the_temps, 4))
   } else {
     # Initial temperature for GOTM & Simstrat
-    the_temps_enkf_tmp <- x_start[1:ndepths_modeled]
+    the_temps_enkf_tmp <- x_start[1, ]
 
     the_temps <- approx(modeled_depths, the_temps_enkf_tmp, modeled_depths, rule = 2)$y
+    the_sals <- approx(modeled_depths, round(x_start[2, ]), modeled_depths, rule = 2)$y
+
 
     init_prof <- data.frame(Depth_meter = round(modeled_depths, 4),
                             Water_Temperature_celsius = round(the_temps, 4))
@@ -108,7 +107,7 @@ run_model_ler <- function(model,
 
     diagnostics <- array(NA, dim = c(length(diagnostics_names),ndepths_modeled))
 
-    x_star_end <- rep(NA, nstates)
+    x_star_end <- array(NA, dim =c(nstates, ndepths_modeled))
 
     if(npars > 0){
 
@@ -135,9 +134,10 @@ run_model_ler <- function(model,
     if(include_wq){
 
       wq_init_vals <- c()
+      start_index <- 2
 
       for(wq in 1:num_wq_vars){
-        wq_enkf_tmp <- x_start[wq_start[wq + 1]:wq_end[wq + 1]]
+        wq_enkf_tmp <- x_start[start_index + wq, ]
         wq_enkf_tmp[wq_enkf_tmp < 0] <- 0
         wq_init_vals <- c(wq_init_vals,
                           approx(modeled_depths,wq_enkf_tmp, model_depths_mid, rule = 2)$y)
@@ -196,7 +196,7 @@ run_model_ler <- function(model,
 
     diagnostics <- array(NA, dim = c(length(diagnostics_names), ndepths_modeled))
 
-    x_star_end <- rep(NA, nstates)
+    x_star_end <- array(NA, dim =c(nstates, ndepths_modeled))
 
     if(npars > 0){
 
@@ -221,11 +221,12 @@ run_model_ler <- function(model,
     # got_deps <- got_deps[order(got_deps)]
 
     got_temps <- approx(modeled_depths, the_temps_enkf_tmp, got_deps, rule = 2)$y
+    got_salts <- approx(modeled_depths, x_start[2, ], got_deps, rule = 2)$y
 
 
     inp_list <- list(z_vars = list(z = restart_list$z_vars$z[i-1, , m],
                                    temp = got_temps,
-                                   salt = restart_list$z_vars$salt[i-1, , m],
+                                   salt = got_salts,
                                    u = restart_list$z_vars$u[i-1, , m],
                                    uo = restart_list$z_vars$uo[i-1, , m],
                                    v = restart_list$z_vars$v[i-1, , m],
@@ -247,7 +248,7 @@ run_model_ler <- function(model,
 
     diagnostics <- array(NA, dim = c(length(diagnostics_names), ndepths_modeled))
 
-    x_star_end <- rep(NA, nstates)
+    x_star_end <- array(NA, dim =c(nstates, ndepths_modeled))
 
     if(npars > 0){
 
@@ -264,12 +265,14 @@ run_model_ler <- function(model,
 
     sim_deps <- abs(restart_list$zi[i-1, , m])
     sim_temp <- approx(modeled_depths, the_temps_enkf_tmp, sim_deps, rule = 2)$y
+    got_salts <- approx(modeled_depths, x_start[2, ], sim_deps, rule = 2)$y
+
 
     inp_list <- list(zi = restart_list$zi[i-1, , m],
                      u = restart_list$u[i-1, , m],
                      v = restart_list$v[i-1, , m],
                      temp = sim_temp,
-                     S = restart_list$S[i-1, , m],
+                     S = got_salts,
                      k = restart_list$k[i-1, , m],
                      eps = restart_list$eps[i-1, , m],
                      num = restart_list$num[i-1, , m],
@@ -398,8 +401,8 @@ run_model_ler <- function(model,
 
         num_model_depths <- length(ler_temp_out$depths_enkf)
         temps <- (ler_temp_out$output[ ,1])
-        x_star_end <- temps
-        salt_end <- ler_temp_out$salt
+        x_star_end[1, ] <- temps
+        x_star_end[2, ] <- ler_temp_out$salt
 
         model_depths_end <- rep(NA, 500)
         model_depths_end[1:num_model_depths] <- ler_temp_out$depths_enkf
@@ -454,9 +457,9 @@ run_model_ler <- function(model,
   }
 
   return(list(x_star_end  = x_star_end,
-                # salt_end = salt_end,
                 lake_depth_end  = ler_temp_out$lake_depth,
                 restart_vars = ler_temp_out$restart_vars,
                 diagnostics_end  = diagnostics,
-                model_internal_depths = model_depths_end))
+                model_internal_depths = model_depths_end,
+                curr_pars = curr_pars))
 }

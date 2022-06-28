@@ -45,12 +45,7 @@ set_up_model_ler <- function(model,
     file.copy(from = file.path(config$file_path$configuration_directory, config$model_settings$base_GLM_nml),
               to = file.path(ens_working_directory, "GLM", "glm3.nml"), overwrite = TRUE)
 
-    non_temp_names <- state_names[which(!(state_names %in% "temp"))]
-    if(length(non_temp_names) == 0) {
-      non_temp_names <- NULL
-    }
-
-    inflow_var_names <- c("FLOW","TEMP","SALT", non_temp_names)
+    inflow_var_names <- c("FLOW","TEMP","SALT")
 
     ler_yaml <- gotmtools::set_yaml(ler_yaml, value = as.integer(0), key1 = "model_parameters", key2 = "GLM", key3 = "init_profiles/num_wq_vars")
     # ler_yaml <- gotmtools::set_yaml(ler_yaml, value = "''", key1 = "model_parameters", key2 = "GLM", key3 = "wq_names")
@@ -59,7 +54,7 @@ set_up_model_ler <- function(model,
     # ler_yaml$model_parameters$GLM$the_depths <- config$modeled_depths
     # ler_yaml <- gotmtools::set_yaml(ler_yaml, value = length(config$modeled_depths), key1 = "model_parameters", key2 = "GLM", key3 = "init_profiles/num_depths")
     ler_yaml <- gotmtools::set_yaml(ler_yaml, value = length(inflow_var_names), key1 = "model_parameters", key2 = "GLM", key3 = "inflow/inflow_varnum")
-    ler_yaml <- gotmtools::set_yaml(ler_yaml, value = inflow_var_names, key1 = "model_parameters", key2 = "GLM", key3 = "inflow/inflow_vars")
+    #ler_yaml <- gotmtools::set_yaml(ler_yaml, value = inflow_var_names, key1 = "model_parameters", key2 = "GLM", key3 = "inflow/inflow_vars")
     ler_yaml <- gotmtools::set_yaml(ler_yaml, value = "'output'", key1 = "model_parameters", key2 = "GLM", key3 = "output/out_dir")
 
     if(config$include_wq){
@@ -82,11 +77,11 @@ set_up_model_ler <- function(model,
 
   gotmtools::write_yaml(ler_yaml, yaml_file)
 
-  LakeEnsemblR::export_config(config_file = basename(yaml_file), model = model, dirs = TRUE,
+  suppressMessages({LakeEnsemblR::export_config(config_file = basename(yaml_file), model = model, dirs = TRUE,
                               time = FALSE, location = TRUE, output_settings = TRUE,
                               meteo = TRUE, init_cond = FALSE, extinction = TRUE,
                               inflow = TRUE, model_parameters = TRUE,
-                              folder = ens_working_directory)
+                              folder = ens_working_directory)})
 
 
 }

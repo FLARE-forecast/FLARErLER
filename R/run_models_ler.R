@@ -20,7 +20,7 @@ run_models_ler <- function(model, folder, verbose, restart, member, the_temps, m
     GLM3r::run_glm(sim_folder = file.path(folder, "GLM"), verbose = verbose)
     # glmtools::plot_temp(file.path(folder, "GLM", "output.nc"))
 
-    message("GLM run is complete! ", paste0("[", Sys.time(), "]"))
+    if(verbose) message("GLM run is complete! ", paste0("[", Sys.time(), "]"))
   }
 
   # GOTM ----
@@ -43,7 +43,7 @@ run_models_ler <- function(model, folder, verbose, restart, member, the_temps, m
               to = file.path(folder, "GOTM", paste0("restart_", member, ".nc")),
               overwrite = TRUE)
 
-    message("GOTM run is complete! ", paste0("[", Sys.time(), "]"))
+    if(verbose) message("GOTM run is complete! ", paste0("[", Sys.time(), "]"))
   }
 
   # Simstrat ----
@@ -51,7 +51,7 @@ run_models_ler <- function(model, folder, verbose, restart, member, the_temps, m
 
     SimstratR::run_simstrat(sim_folder = file.path(folder, "Simstrat"), par_file = "simstrat.par", verbose = verbose)
 
-    message("Simstrat run is complete! ", paste0("[", Sys.time(), "]"))
+    if(verbose) message("Simstrat run is complete! ", paste0("[", Sys.time(), "]"))
   }
 
 }
