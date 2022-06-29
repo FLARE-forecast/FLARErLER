@@ -297,7 +297,7 @@ write_forecast_netcdf_ler <- function(da_forecast_output,
     index <- index + 1
     ncdf4::ncvar_put(ncout, def_list[[index]], model_internal_depths)
     index <- index + 1
-    ncdf4::ncvar_put(ncout, def_list[[index]], salt)
+    ncdf4::ncvar_put(ncout, def_list[[index]], x_efi[,1:length(depths), , 2])
   } else if(config$model_settings$model ==  "GOTM") {
     # z vars
     ncdf4::ncvar_put(ncout, def_list[[index]], x_efi[,1:length(depths), , 2]) #Salt
