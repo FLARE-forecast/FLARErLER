@@ -210,14 +210,14 @@ run_da_forecast_ler <- function(states_init,
     snow_thickness[1, ] <- aux_states_init$snow_thickness
     white_ice_thickness[1, ] <- aux_states_init$white_ice_thickness
     blue_ice_thickness[1, ] <- aux_states_init$blue_ice_thickness
-    #the_sals[1, , ] <- aux_states_init$the_sals
+    the_sals[1, , ] <- aux_states_init$the_sals
     avg_surf_temp[1, ] <- aux_states_init$avg_surf_temp
     restart_variables[, 1, ] <- 0
 
     restart_list <- list(lake_depth = lake_depth,
                          model_internal_depths = model_internal_depths,
                          the_depths = the_depths,
-                         #the_sals = the_sals,
+                         the_sals = the_sals,
                          snow_thickness = snow_thickness,
                          white_ice_thickness = white_ice_thickness,
                          blue_ice_thickness = blue_ice_thickness,
@@ -275,7 +275,7 @@ run_da_forecast_ler <- function(states_init,
     }
 
     restart_list <- list(lake_depth = lake_depth,
-      z_vars = list(z = z,
+                         z_vars = list(z = z,
                                        temp = temp,
                                        salt = salt,
                                        u = u,
@@ -324,7 +324,7 @@ run_da_forecast_ler <- function(states_init,
       u[1, , ] <- aux_states_init$u
       v[1, , ] <- aux_states_init$v
       # temp[1, , ] <- aux_states_init$temp
-      #S[1, , ] <- aux_states_init$S
+      S[1, , ] <- aux_states_init$S
       k[1, , ] <- aux_states_init$k
       eps[1, , ] <- aux_states_init$eps
       num[1, , ] <- aux_states_init$num
