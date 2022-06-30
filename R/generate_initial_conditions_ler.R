@@ -133,7 +133,7 @@ generate_initial_conditions_ler <- function(states_config,
       aux_states_init$snow_thickness <- init$snow_thickness
       aux_states_init$white_ice_thickness <- init$white_ice_thickness
       aux_states_init$blue_ice_thickness <- init$blue_ice_thickness
-      aux_states_init$the_sals <- config$default_init$salinity
+      aux_states_init$the_sals <- init$the_sals
       aux_states_init$the_depths <- init$the_depths
       aux_states_init$model_internal_depths <- init$model_internal_depths
       aux_states_init$lake_depth <- init$lake_depth
