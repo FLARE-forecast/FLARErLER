@@ -197,7 +197,7 @@ run_da_forecast_ler <- function(states_init,
     lake_depth <- array(NA, dim = c(nsteps, nmembers))
     the_depths <- array(NA, dim = c(nsteps, ndepths_modeled, nmembers))
     model_internal_depths <- array(NA, dim = c(nsteps, 500, nmembers))
-    #the_sals <- array(NA, dim = c(nsteps, ndepths_modeled, nmembers))
+    the_sals <- array(NA, dim = c(nsteps, ndepths_modeled, nmembers))
     snow_thickness <- array(NA, dim = c(nsteps, nmembers))
     white_ice_thickness <- array(NA, dim = c(nsteps, nmembers))
     blue_ice_thickness <- array(NA, dim = c(nsteps, nmembers))
@@ -210,14 +210,14 @@ run_da_forecast_ler <- function(states_init,
     snow_thickness[1, ] <- aux_states_init$snow_thickness
     white_ice_thickness[1, ] <- aux_states_init$white_ice_thickness
     blue_ice_thickness[1, ] <- aux_states_init$blue_ice_thickness
-    #the_sals[1, , ] <- aux_states_init$the_sals
+    the_sals[1, , ] <- aux_states_init$the_sals
     avg_surf_temp[1, ] <- aux_states_init$avg_surf_temp
     restart_variables[, 1, ] <- 0
 
     restart_list <- list(lake_depth = lake_depth,
                          model_internal_depths = model_internal_depths,
                          the_depths = the_depths,
-                         #the_sals = the_sals,
+                         the_sals = the_sals,
                          snow_thickness = snow_thickness,
                          white_ice_thickness = white_ice_thickness,
                          blue_ice_thickness = blue_ice_thickness,
