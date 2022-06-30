@@ -275,7 +275,7 @@ run_da_forecast_ler <- function(states_init,
     }
 
     restart_list <- list(lake_depth = lake_depth,
-      z_vars = list(z = z,
+                         z_vars = list(z = z,
                                        temp = temp,
                                        salt = salt,
                                        u = u,
@@ -324,7 +324,7 @@ run_da_forecast_ler <- function(states_init,
       u[1, , ] <- aux_states_init$u
       v[1, , ] <- aux_states_init$v
       # temp[1, , ] <- aux_states_init$temp
-      #S[1, , ] <- aux_states_init$S
+      S[1, , ] <- aux_states_init$S
       k[1, , ] <- aux_states_init$k
       eps[1, , ] <- aux_states_init$eps
       num[1, , ] <- aux_states_init$num
