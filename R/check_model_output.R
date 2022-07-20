@@ -1,5 +1,5 @@
-#' @param folder
-#' @param model
+#' @param folder filepath; to folder which contains the model
+#' @param model character; name of the model
 #' @noRd
 
 check_model_output <- function(folder, model) {

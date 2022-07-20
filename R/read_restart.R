@@ -4,7 +4,6 @@
 #'
 #'@param folder folder
 #'@param model string; denoting which model you are extracting from. Can be 'GLM', 'GOTM', 'Simstrat'
-#'@examples
 #'
 #'
 #'@importFrom ncdf4 nc_open ncvar_get nc_close ncatt_get

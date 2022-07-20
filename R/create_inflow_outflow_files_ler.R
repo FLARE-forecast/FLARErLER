@@ -3,10 +3,10 @@
 #' @param inflow_file_dir string; full directory path that contains forecasted inflow and outflow files
 #' @param inflow_obs string; full path to cleaned inflow observation in the specified format
 #' @param working_directory string; full directory where FLARE executes
+#' @param config list; list of configurations
 #' @param state_names vector; vector of state names that will be included in the inflow files
 #' @return list with two vectors. One vector is the matrix of inflow_file_names and the other is the matrix of outflow_file_names
 #' @export
-#' @examples
 create_inflow_outflow_files_ler <- function(inflow_file_dir = NULL,
                                             inflow_obs,
                                             working_directory,

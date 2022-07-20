@@ -358,11 +358,13 @@ run_da_forecast_ler <- function(states_init,
     start_step <- 2
   }
 
-  # Print GLM version
-  glm_v <- GLM3r::glm_version()
-  glm_v <- substr(glm_v[3], 35, 58)
-  message("Using GLM ", glm_v)
-  config$metadata$model_description$version <- substr(glm_v, 9, 16)
+  if(model == "GLM") {
+    # Print GLM version
+    glm_v <- GLM3r::glm_version()
+    glm_v <- substr(glm_v[3], 35, 58)
+    message("Using GLM ", glm_v)
+    config$metadata$model_description$version <- substr(glm_v, 9, 16)
+  }
 
   ###START EnKF
 
