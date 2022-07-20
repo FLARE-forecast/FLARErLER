@@ -324,7 +324,7 @@ run_da_forecast_ler <- function(states_init,
       u[1, , ] <- aux_states_init$u
       v[1, , ] <- aux_states_init$v
       # temp[1, , ] <- aux_states_init$temp
-      S[1, , ] <- aux_states_init$S
+      #S[1, , ] <- aux_states_init$S
       k[1, , ] <- aux_states_init$k
       eps[1, , ] <- aux_states_init$eps
       num[1, , ] <- aux_states_init$num
@@ -359,10 +359,10 @@ run_da_forecast_ler <- function(states_init,
   }
 
   # Print GLM version
-  glm_v <- GLM3r::glm_version()
-  glm_v <- substr(glm_v[3], 35, 58)
-  message("Using GLM ", glm_v)
-  config$metadata$model_description$version <- substr(glm_v, 9, 16)
+  #glm_v <- GLM3r::glm_version()
+  #glm_v <- substr(glm_v[3], 35, 58)
+  #message("Using GLM ", glm_v)
+  #config$metadata$model_description$version <- substr(glm_v, 9, 16)
 
   ###START EnKF
 
