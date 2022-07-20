@@ -6,7 +6,6 @@
 #' @param folder folder
 #' @param verbose Boolean; Should model output be shown in the console. Defaults to FALSE
 #' @keywords methods
-#' @examples
 #'
 #' @import GLM3r
 #' @import GOTMr

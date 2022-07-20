@@ -1,17 +1,13 @@
 #' Convert NOAA forecasts to GLM format
 #'
-#' @param obs_met_file
-#' @param out_dir
-#' @param forecast_dir
-#' @param start_datetime
-#' @param end_datetime
-#' @param forecast_start_datetime
-#' @param local_tzone
+#' @param obs_met_file filepath; to observed met file
+#' @param out_dir filepath; to directory for outputs
+#' @param forecast_dir filepath; to directory with forecasts
+#' @param config list; list of configurations
 #' @export
 #' @importFrom zoo na.approx
-#' @return
+#' @return vector; of filenames
 #'
-#' @examples
 generate_met_files_ler <- function(obs_met_file = NULL,
                                    out_dir,
                                    forecast_dir = NULL,

@@ -80,7 +80,7 @@ uncertainty:
    met_downscale: TRUE
    inflow_process: TRUE
 output_settings:
-   diagnostics_names:  [extc_coef]
+   diagnostics_names:  [extc]
 management:
    simulate_sss: TRUE
    sss_depth: 8.0
