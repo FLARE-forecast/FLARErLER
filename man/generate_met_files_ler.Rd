@@ -11,8 +11,17 @@ generate_met_files_ler(
   config
 )
 }
-\value{
+\arguments{
+\item{obs_met_file}{filepath; to observed met file}
 
+\item{out_dir}{filepath; to directory for outputs}
+
+\item{forecast_dir}{filepath; to directory with forecasts}
+
+\item{config}{list; list of configurations}
+}
+\value{
+vector; of filenames
 }
 \description{
 Convert NOAA forecasts to GLM format

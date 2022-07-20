@@ -19,6 +19,8 @@ create_inflow_outflow_files_ler(
 
 \item{working_directory}{string; full directory where FLARE executes}
 
+\item{config}{list; list of configurations}
+
 \item{state_names}{vector; vector of state names that will be included in the inflow files}
 }
 \value{

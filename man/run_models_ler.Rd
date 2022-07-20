@@ -25,7 +25,4 @@ Options include c("GOTM", "GLM", "Simstrat", "FLake", "MyLake")}
 \description{
 Run the lake model from LakeEnsemblR
 }
-\examples{
-
-}
 \keyword{methods}
