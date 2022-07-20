@@ -47,15 +47,17 @@ set_up_model_ler <- function(model,
 
     inflow_var_names <- c("FLOW","TEMP","SALT")
 
-    ler_yaml <- gotmtools::set_yaml(ler_yaml, value = as.integer(0), key1 = "model_parameters", key2 = "GLM", key3 = "init_profiles/num_wq_vars")
-    # ler_yaml <- gotmtools::set_yaml(ler_yaml, value = "''", key1 = "model_parameters", key2 = "GLM", key3 = "wq_names")
-    ler_yaml <- gotmtools::set_yaml(ler_yaml, value = ncol(inflow_file_names), key1 = "model_parameters", key2 = "GLM", key3 = "inflow/num_inflows")
-    ler_yaml <- gotmtools::set_yaml(ler_yaml, value = ncol(outflow_file_names), key1 = "model_parameters", key2 = "GLM", key3 = "outflow/num_outlet")
-    # ler_yaml$model_parameters$GLM$the_depths <- config$modeled_depths
-    # ler_yaml <- gotmtools::set_yaml(ler_yaml, value = length(config$modeled_depths), key1 = "model_parameters", key2 = "GLM", key3 = "init_profiles/num_depths")
-    ler_yaml <- gotmtools::set_yaml(ler_yaml, value = length(inflow_var_names), key1 = "model_parameters", key2 = "GLM", key3 = "inflow/inflow_varnum")
-    #ler_yaml <- gotmtools::set_yaml(ler_yaml, value = inflow_var_names, key1 = "model_parameters", key2 = "GLM", key3 = "inflow/inflow_vars")
-    ler_yaml <- gotmtools::set_yaml(ler_yaml, value = "'output'", key1 = "model_parameters", key2 = "GLM", key3 = "output/out_dir")
+    if(ler_yaml$inflows$use) {
+      ler_yaml$model_parameters$GLM$`inflow/num_inflows` <- ncol(inflow_file_names)
+      ler_yaml$model_parameters$GLM$`outflow/num_outlet` <- ncol(outflow_file_names)
+    } else {
+      ler_yaml$model_parameters$GLM$`inflow/num_inflows` <- as.integer(0)
+      ler_yaml$model_parameters$GLM$`outflow/num_outlet` <- as.integer(0)
+    }
+
+    ler_yaml$model_parameters$GLM$`init_profiles/num_wq_vars` <- 0
+    ler_yaml$model_parameters$GLM$`inflow/inflow_varnum` <- length(inflow_var_names)
+    ler_yaml$model_parameters$GLM$`output/out_dir` <- "'output'"
 
     if(config$include_wq){
 
@@ -69,10 +71,6 @@ set_up_model_ler <- function(model,
                 to = paste0(ens_working_directory, "/", "aed2_zoop_pars.nml"), overwrite = TRUE)
 
     }
-
-    #Create a copy of the NML to record starting initial conditions
-    # file.copy(from = paste0(ens_working_directory, "/", "glm3.nml"), #GLM SPECIFIC
-    #           to = paste0(ens_working_directory, "/", "glm3_initial.nml"), overwrite = TRUE) #GLM SPECIFIC
   }
 
   gotmtools::write_yaml(ler_yaml, yaml_file)
