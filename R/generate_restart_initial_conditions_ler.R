@@ -100,7 +100,7 @@ generate_restart_initial_conditions_ler <- function(restart_file,
     u <- ncdf4::ncvar_get(nc, "u")[restart_index, , ]
     v <- ncdf4::ncvar_get(nc, "v")[restart_index, , ]
     temp <- ncdf4::ncvar_get(nc, "temp")[restart_index, , ]
-    S <- ncdf4::ncvar_get(nc, "S")[restart_index, , ]
+    S <- ncdf4::ncvar_get(nc, "salt")[restart_index, , ]
     k <- ncdf4::ncvar_get(nc, "k")[restart_index, , ]
     eps <- ncdf4::ncvar_get(nc, "eps")[restart_index, , ]
     num <- ncdf4::ncvar_get(nc, "num")[restart_index, , ]
