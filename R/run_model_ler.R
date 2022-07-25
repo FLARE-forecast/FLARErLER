@@ -173,6 +173,7 @@ run_model_ler <- function(model,
       }
     }
 
+    glm_depths_end <- rep(NA, length(init_prof$Depth_meter))
 
     inp_list <- list(lake_depth = round(restart_list$lake_depth[i-1, m], 4),
                      the_depths = init_prof$Depth_meter,
@@ -398,11 +399,25 @@ run_model_ler <- function(model,
                                                   ler_yaml = yml,
                                                   run_success = run_success)
 
-
         num_model_depths <- length(ler_temp_out$depths_enkf)
-        temps <- (ler_temp_out$output[ ,1])
-        x_star_end[1, ] <- temps
-        x_star_end[2, ] <- ler_temp_out$salt
+
+        if(model == "GLM") {
+          num_glm_depths <- length(ler_temp_out$depths_enkf)
+          glm_temps <- rev(ler_temp_out$output[ ,1])
+          glm_depths_end[1:num_glm_depths] <- ler_temp_out$depths_enkf
+          glm_depths_tmp <- c(ler_temp_out$depths_enkf,ler_temp_out$lake_depth)
+          glm_depths_mid <- glm_depths_tmp[1:(length(glm_depths_tmp)-1)] + diff(glm_depths_tmp)/2
+
+          x_star_end[1, ] <- approx(glm_depths_mid,glm_temps, modeled_depths, rule = 2)$y
+
+          glm_salt <- rev(ler_temp_out$output[ ,2])
+          x_star_end[2, ] <- approx(glm_depths_mid, glm_salt, modeled_depths, rule = 2)$y
+
+        } else {
+          temps <- (ler_temp_out$output[ ,1])
+          x_star_end[1, ] <- temps
+          x_star_end[2, ] <- ler_temp_out$salt
+        }
 
         model_depths_end <- rep(NA, 500)
         model_depths_end[1:num_model_depths] <- ler_temp_out$depths_enkf

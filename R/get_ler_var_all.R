@@ -52,6 +52,12 @@ get_ler_var_all <- function(model,
     heights_surf <- heights[tallest_layer, final_time_step]
     heights <- heights[1:tallest_layer, final_time_step]
 
+    output <- array(NA,dim=c(tallest_layer, length(vars_depth)))
+    for(v in 1:length(vars_depth)){
+      var_modeled <-  matrix(ncdf4::ncvar_get(glm_nc, vars_depth[v]), ncol = final_time_step)
+      output[, v] <- var_modeled[1:tallest_layer,final_time_step]
+    }
+
     depths_enkf = rev(heights_surf - heights)
 
     output_no_depth <- NA
