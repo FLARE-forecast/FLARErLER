@@ -437,7 +437,11 @@ run_da_forecast_ler <- function(states_init,
             curr_pars_ens <-  pars[i-1, , m]
           }else if(par_fit_method %in% c("perturb","perturb_const") & da_method != "none"){
             if(par_fit_method == "perturb_const"){
-              par_mean <- apply(pars[i-1, , ], 1, mean)
+              if(npars > 1){
+                par_mean <- apply(pars[i-1, , ], 1, mean)
+              }else{
+                par_mean <- mean(pars[i-1, , ])
+              }
               curr_pars_ens <- rnorm(npars, par_mean, sd = pars_config$perturb_par)
             }else{
               if(i < (hist_days + 1)){
@@ -851,6 +855,7 @@ run_da_forecast_ler <- function(states_init,
         if(npars > 0){
           par_mean <- apply(pars_corr, 1, mean)
           if(par_fit_method == "inflate"){
+            print(pars_config$inflat_pars)
             for(m in 1:nmembers){
               pars_corr[, m] <- pars_config$inflat_pars * (pars_corr[, m] - par_mean) + par_mean
             }

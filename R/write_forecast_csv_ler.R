@@ -58,7 +58,7 @@ write_forecast_csv_ler <- function(da_forecast_output,
         for(k in 1:dim(diagnostics)[3]){
           tmp <- tibble(predicted = diagnostics[i, j, k, ],
                         time  = full_time[j],
-                        variable = states_config$state_names[i],
+                        variable = config$output_settings$diagnostics_names[i],
                         depth = config$model_settings$modeled_depths[k],
                         forecast = forecast_flag[j],
                         ensemble = 1:dim(diagnostics)[4],

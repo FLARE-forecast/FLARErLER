@@ -264,16 +264,17 @@ run_model_ler <- function(model,
       }
     }
 
+    the_temps_enkf_tmp <- x_start[1, ]
     sim_deps <- abs(restart_list$zi[i-1, , m])
     sim_temp <- approx(modeled_depths, the_temps_enkf_tmp, sim_deps, rule = 2)$y
-    got_salts <- approx(modeled_depths, x_start[2, ], sim_deps, rule = 2)$y
+    sim_salts <- approx(modeled_depths, x_start[2, ], sim_deps, rule = 2)$y
 
 
     inp_list <- list(zi = restart_list$zi[i-1, , m],
                      u = restart_list$u[i-1, , m],
                      v = restart_list$v[i-1, , m],
                      temp = sim_temp,
-                     S = got_salts,
+                     S = sim_salts,
                      k = restart_list$k[i-1, , m],
                      eps = restart_list$eps[i-1, , m],
                      num = restart_list$num[i-1, , m],
