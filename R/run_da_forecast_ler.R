@@ -370,6 +370,9 @@ run_da_forecast_ler <- function(states_init,
 
   for(i in start_step:nsteps){
 
+    #setwd("/Users/quinn/workfiles/Research/SSC_forecasting/ler/FCRE_LER-forecast-code/flare_tempdir/fcre/ms1_ler_flare_Simstrat")
+    #load("../../../../workspace_inENKF.RData")
+
     if(i > 1){
       curr_start <- strftime(full_time[i - 1],
                              format="%Y-%m-%d %H:%M:%S",
@@ -535,7 +538,7 @@ run_da_forecast_ler <- function(states_init,
           restart_list$lake_depth[i, m] <- max(-out[[m]]$restart_vars$z_vars$z)
           restart_list$z_vars$z[i, , m] <- out[[m]]$restart_vars$z_vars$z
           restart_list$z_vars$temp[i, , m] <- out[[m]]$restart_vars$z_vars$temp
-          #restart_list$z_vars$salt[i, , m] <- out[[m]]$restart_vars$z_vars$salt
+          restart_list$z_vars$salt[i, , m] <- out[[m]]$restart_vars$z_vars$salt
           restart_list$z_vars$u[i, , m] <- out[[m]]$restart_vars$z_vars$u
           restart_list$z_vars$uo[i, , m] <- out[[m]]$restart_vars$z_vars$uo
           restart_list$z_vars$v[i, , m] <- out[[m]]$restart_vars$z_vars$v
@@ -553,12 +556,12 @@ run_da_forecast_ler <- function(states_init,
           restart_list$zi_vars$nuh[i, , m] <- out[[m]]$restart_vars$zi_vars$nuh
           restart_list$zi_vars$nus[i, , m] <- out[[m]]$restart_vars$zi_vars$nus
         } else if(model == "Simstrat") {
-          restart_list$lake_depth[i, m] <- max(-out[[m]]$restart_vars$zi)
+          restart_list$lake_depth[i, m] <- out[[m]]$lake_depth_end
           restart_list$zi[i, , m] <- out[[m]]$restart_vars$zi
           restart_list$u[i, , m] <- out[[m]]$restart_vars$u
           restart_list$v[i, , m] <- out[[m]]$restart_vars$v
           restart_list$temp[i, , m] <- out[[m]]$restart_vars$temp
-          #restart_list$S[i, , m] <- out[[m]]$restart_vars$S
+          restart_list$S[i, , m] <- out[[m]]$restart_vars$S
           restart_list$k[i, , m] <- out[[m]]$restart_vars$k
           restart_list$eps[i, , m] <- out[[m]]$restart_vars$eps
           restart_list$num[i, , m] <- out[[m]]$restart_vars$num

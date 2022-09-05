@@ -127,7 +127,6 @@ generate_initial_conditions_ler <- function(states_config,
       }
     }
 
-
     aux_states_init <- list()
     if(config$model_settings$model == "GLM") {
       aux_states_init$snow_thickness <- init$snow_thickness

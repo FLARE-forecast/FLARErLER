@@ -264,10 +264,15 @@ run_model_ler <- function(model,
       }
     }
 
-    the_temps_enkf_tmp <- x_start[1, ]
-    sim_deps <- abs(restart_list$zi[i-1, , m])
-    sim_temp <- approx(modeled_depths, the_temps_enkf_tmp, sim_deps, rule = 2)$y
-    sim_salts <- approx(modeled_depths, x_start[2, ], sim_deps, rule = 2)$y
+    if(i > 1){
+      the_temps_enkf_tmp <- x_start[1, ]
+      sim_deps <- abs(restart_list$zi[i-1, , m])
+      sim_temp <- approx(modeled_depths, x_start[1, ], sim_deps, rule = 2)$y
+      sim_salts <- approx(modeled_depths, x_start[2, ], sim_deps, rule = 2)$y
+    }else{
+      sim_temp <- x_start[1, ]
+      sim_salts <- x_start[2, ]
+    }
 
 
     inp_list <- list(zi = restart_list$zi[i-1, , m],
@@ -305,7 +310,7 @@ run_model_ler <- function(model,
   suppressMessages({
     LakeEnsemblR::export_config(config_file = config$model_settings$base_ler_yaml, model = model, dirs = FALSE,
                                 time = TRUE, location = TRUE, output_settings = TRUE,
-                                meteo = FALSE, init_cond = TRUE, extinction = l_ext,
+                                meteo = TRUE, init_cond = TRUE, extinction = l_ext,
                                 inflow = FALSE, model_parameters = TRUE,
                                 folder = working_directory, print = FALSE)
   })
@@ -414,10 +419,23 @@ run_model_ler <- function(model,
           glm_salt <- rev(ler_temp_out$output[ ,2])
           x_star_end[2, ] <- approx(glm_depths_mid, glm_salt, modeled_depths, rule = 2)$y
 
-        } else {
+        } else if(model == "GOTM") {
           temps <- (ler_temp_out$output[ ,1])
           x_star_end[1, ] <- temps
           x_star_end[2, ] <- ler_temp_out$salt
+        } else if (model == "Simstrat") {
+
+          num_glm_depths <- length(ler_temp_out$depths_enkf)
+          simstrat_temps <-ler_temp_out$output[ ,1]
+          simstrat_depths_end  <- ler_temp_out$depths_enkf
+          simstrat_depths_tmp <- ler_temp_out$depths_enkf
+          simstrat_depths_mid <-  simstrat_depths_tmp[1:(length( simstrat_depths_tmp)-1)] + diff( simstrat_depths_tmp)/2
+
+          x_star_end[1, ] <- approx(simstrat_depths_tmp,simstrat_temps, modeled_depths, rule = 2)$y
+
+          simstrat_salt <- ler_temp_out$output[ ,2]
+          x_star_end[2, ] <- approx(simstrat_depths_tmp, simstrat_salt, modeled_depths, rule = 2)$y
+
         }
 
         model_depths_end <- rep(NA, 500)

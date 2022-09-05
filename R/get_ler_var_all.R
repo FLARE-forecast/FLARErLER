@@ -114,17 +114,14 @@ get_ler_var_all <- function(model,
     #   approx(deps2, ., z_out, rule = 2) %>%
     #   .[[2]]
 
+    output <- array(NA, dim=c(length(restart_vars$temp), length(vars_depth)))
+    output[, 1] <- restart_vars$temp
+    output[, 2] <- restart_vars$S
+    depths_enkf <- -restart_vars$zi
+    lake_depth <- max(depths_enkf)
+    salt <- output[, 2]
+    diagnostics_output <- NULL
     output_no_depth <- NA
-
-    if(length(diagnostic_vars) > 0){
-      diagnostics_output <- array(NA,dim=c(tallest_layer, length(diagnostic_vars)))
-      for(v in 1:length(diagnostic_vars)){
-        var_modeled <- ncdf4::ncvar_get(nc, diagnostic_vars[v])[, final_time_step]
-        diagnostics_output[,v] <- var_modeled[1:tallest_layer]
-      }
-    }else{
-      diagnostics_output <- NULL
-    }
   }
 
 
