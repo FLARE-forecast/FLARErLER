@@ -225,8 +225,8 @@ run_da_forecast_ler <- function(states_init,
                          restart_variables = restart_variables)
 
   } else if(model == "GOTM") {
-    yaml <- gotmtools::read_yaml(file.path(working_directory, "1", "LakeEnsemblR.yaml"))
-    nz <- round(yaml$location$depth / yaml$output$depths)
+    yaml <- gotmtools::read_yaml(file.path(working_directory, "1/GOTM", "gotm.yaml"))
+    nz <- yaml$grid$nlev
     nzi <- nz + 1
 
     # z vars
@@ -535,7 +535,7 @@ run_da_forecast_ler <- function(states_init,
 
         } else if(model == "GOTM") {
           # z vars
-          restart_list$lake_depth[i, m] <- max(-out[[m]]$restart_vars$z_vars$z)
+          restart_list$lake_depth[i, m] <- max(-out[[m]]$restart_vars$zi_vars$zi)
           restart_list$z_vars$z[i, , m] <- out[[m]]$restart_vars$z_vars$z
           restart_list$z_vars$temp[i, , m] <- out[[m]]$restart_vars$z_vars$temp
           restart_list$z_vars$salt[i, , m] <- out[[m]]$restart_vars$z_vars$salt

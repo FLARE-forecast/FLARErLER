@@ -56,11 +56,12 @@ run_model_ler <- function(model,
   yml <- yaml::read_yaml(file.path(working_directory, config$model_settings$base_ler_yaml))
 
   # Remove all parameters - updated ones will be added
-  yml$model_parameters[[model]] <- NULL
+  #yml$model_parameters[[model]] <- NULL
 
 
   # Restart with GLM depths
   if(model == "GLM") {
+
     model_depths_start <- restart_list$model_internal_depths[i-1, , m]
     #
     model_depths_tmp <- model_depths_start[!is.na(model_depths_start)]
@@ -73,16 +74,48 @@ run_model_ler <- function(model,
 
     init_prof <- data.frame(Depth_meter = round(model_depths_tmp, 4),
                             Water_Temperature_celsius = round(the_temps, 4))
-  } else {
-    # Initial temperature for GOTM & Simstrat
+  } else if(model == "GOTM"){
+
+
+    model_depths_start <- restart_list$z_vars$z[i-1, , m]
+
+    if(length(!is.na(model_depths_start))){
+      model_depths_tmp <- modeled_depths
+    }else{
+    model_depths_tmp <- model_depths_start[!is.na(model_depths_start)]
+    }
+
+    # Initial temperature
     the_temps_enkf_tmp <- x_start[1, ]
 
-    the_temps <- approx(modeled_depths, the_temps_enkf_tmp, modeled_depths, rule = 2)$y
-    the_sals <- approx(modeled_depths, round(x_start[2, ]), modeled_depths, rule = 2)$y
+    the_temps <- approx(modeled_depths, the_temps_enkf_tmp, model_depths_tmp, rule = 2)$y
+    the_sals <- approx(modeled_depths, round(x_start[2, ]), model_depths_tmp, rule = 2)$y
 
-
-    init_prof <- data.frame(Depth_meter = round(modeled_depths, 4),
+    init_prof <- data.frame(Depth_meter = round(model_depths_tmp, 4),
                             Water_Temperature_celsius = round(the_temps, 4))
+
+
+  }else if(model == "Simstrat"){
+
+    model_depths_start <- restart_list$zi[i-1, , m]
+    #
+    if(length(!is.na(model_depths_start))){
+      model_depths_tmp <- modeled_depths
+    }else{
+      model_depths_tmp <- model_depths_start[!is.na(model_depths_start)]
+    }
+
+
+    # Initial temperature
+    the_temps_enkf_tmp <- x_start[1, ]
+
+    the_temps <- approx(modeled_depths, the_temps_enkf_tmp, model_depths_tmp, rule = 2)$y
+    the_sals <- approx(modeled_depths, round(x_start[2, ]), model_depths_tmp, rule = 2)$y
+
+    init_prof <- data.frame(Depth_meter = round(model_depths_tmp, 4),
+                            Water_Temperature_celsius = round(the_temps, 4))
+
+
   }
 
   write.csv(init_prof, file.path(working_directory, "initial_profile.csv"),
@@ -221,7 +254,7 @@ run_model_ler <- function(model,
     got_deps <- abs(restart_list$z_vars$z[i-1, , m])
     # got_deps <- got_deps[order(got_deps)]
 
-    got_temps <- approx(modeled_depths, the_temps_enkf_tmp, got_deps, rule = 2)$y
+    got_temps <- approx(modeled_depths, x_start[1, ], got_deps, rule = 2)$y
     got_salts <- approx(modeled_depths, x_start[2, ], got_deps, rule = 2)$y
 
 
@@ -288,6 +321,8 @@ run_model_ler <- function(model,
                      b_ice = restart_list$b_ice[i-1, m],
                      w_ice = restart_list$w_ice[i-1, m],
                      snow = restart_list$snow[i-1, m])
+
+    yml[["model_parameters"]][[model]][["Simulation/Timestep s"]] <- 3600
 
   }
 
@@ -420,9 +455,20 @@ run_model_ler <- function(model,
           x_star_end[2, ] <- approx(glm_depths_mid, glm_salt, modeled_depths, rule = 2)$y
 
         } else if(model == "GOTM") {
-          temps <- (ler_temp_out$output[ ,1])
-          x_star_end[1, ] <- temps
-          x_star_end[2, ] <- ler_temp_out$salt
+          x_star_end[1, ] <- ler_temp_out$output[ ,1]
+          x_star_end[2, ] <- ler_temp_out$output[ ,2]
+
+          num_glm_depths <- length(ler_temp_out$depths_enkf)
+          simstrat_temps <-ler_temp_out$output[ ,1]
+          simstrat_depths_end  <- ler_temp_out$depths_enkf
+          simstrat_depths_tmp <- ler_temp_out$depths_enkf
+
+          x_star_end[1, ] <- approx(simstrat_depths_tmp,simstrat_temps, modeled_depths, rule = 2)$y
+
+          simstrat_salt <- ler_temp_out$output[ ,2]
+          x_star_end[2, ] <- approx(simstrat_depths_tmp, simstrat_salt, modeled_depths, rule = 2)$y
+
+
         } else if (model == "Simstrat") {
 
           num_glm_depths <- length(ler_temp_out$depths_enkf)
