@@ -858,7 +858,6 @@ run_da_forecast_ler <- function(states_init,
         if(npars > 0){
           par_mean <- apply(pars_corr, 1, mean)
           if(par_fit_method == "inflate"){
-            print(pars_config$inflat_pars)
             for(m in 1:nmembers){
               pars_corr[, m] <- pars_config$inflat_pars * (pars_corr[, m] - par_mean) + par_mean
             }
