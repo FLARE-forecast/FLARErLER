@@ -442,10 +442,17 @@ run_da_forecast_ler <- function(states_init,
             if(par_fit_method == "perturb_const"){
               if(npars > 1){
                 par_mean <- apply(pars[i-1, , ], 1, mean)
+                par_sd <- apply(pars[i-1, , ], 1, sd)
               }else{
                 par_mean <- mean(pars[i-1, , ])
+                par_sd <- mean(pars[i-1, , ])
               }
-              curr_pars_ens <- rnorm(npars, par_mean, sd = pars_config$perturb_par)
+
+
+              par_z <- (pars[i-1, , ] - par_mean)/par_sd
+
+              curr_pars_ens <- par_z * pars_config$perturb_par + par_mean
+
             }else{
               if(i < (hist_days + 1)){
                 curr_pars_ens <- pars[i-1, , m] + rnorm(npars, mean = rep(0, npars), sd = pars_config$perturb_par)
