@@ -445,7 +445,7 @@ run_da_forecast_ler <- function(states_init,
                 par_sd <- apply(pars[i-1, , ], 1, sd)
               }else{
                 par_mean <- mean(pars[i-1, , ])
-                par_sd <- mean(pars[i-1, , ])
+                par_sd <- sd(pars[i-1, , ])
               }
 
 
