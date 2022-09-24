@@ -449,7 +449,7 @@ run_da_forecast_ler <- function(states_init,
               }
 
 
-              par_z <- (pars[i-1, , ] - par_mean)/par_sd
+              par_z <- (pars[i-1, ,m] - par_mean)/par_sd
 
               curr_pars_ens <- par_z * pars_config$perturb_par + par_mean
 
