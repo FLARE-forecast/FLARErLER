@@ -735,9 +735,11 @@ run_da_forecast_ler <- function(states_init,
         }
       }
 
-      for(m in 1:nmembers){
-        if(config$model_settings$modeled_depths[max_obs_index] > restart_list$lake_depth[i, m]){
-          restart_list$lake_depth[i, m] = config$model_settings$modeled_depths[max_obs_index]
+      if(max_obs_index > 0){
+        for(m in 1:nmembers){
+          if(config$model_settings$modeled_depths[max_obs_index] > restart_list$lake_depth[i, m]){
+            restart_list$lake_depth[i, m] = config$model_settings$modeled_depths[max_obs_index]
+          }
         }
       }
 
@@ -766,8 +768,8 @@ run_da_forecast_ler <- function(states_init,
 
       secchi_index <- 0
       if(!is.null(obs_secchi)){
-        secchi_index <- 1
         if(!is.na(obs_secchi[i])){
+          secchi_index <- 1
           zt <- c(zt, obs_secchi[i])
 
         }
