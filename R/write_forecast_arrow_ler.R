@@ -1,8 +1,7 @@
-##' @title Generate csv output file
+##' @title Generate csv output file from arrow
 ##' @details Function generates a netcdf file from the object that is returned by run_da_forecast()
 ##' @param da_forecast_output list; object that is returned by run_da_forecast()
 ##' @param forecast_output_directory string; full path of directory where the csv file will be written
-##' @param use_short_filename use shortened file name; this results in less information in the file name and potentially overwriting existing files
 ##' @return None
 ##' @export
 ##' @importFrom lubridate with_tz
@@ -139,18 +138,16 @@ write_forecast_arrow_ler <- function(da_forecast_output,
 
   time_of_forecast <- lubridate::with_tz(da_forecast_output$time_of_forecast, tzone = "UTC")
 
-  output_list <- output_list |>
-    mutate(pub_time = time_of_forecast,
-           start_time = forecast_start_datetime,
-           site_id = config$location$site_id,
-           model_id = config$run_config$sim_name) |>
-    select(start_time, pub_time, model_id, site_id, depth, time, ensemble, variable, predicted, forecast, variable_type)
-
-  if(!use_short_filename | is.na(da_forecast_output$save_file_name_short) | length(which(forecast_flag == 1)) == 0){
-    fname <- file.path(forecast_output_directory, paste0(da_forecast_output$save_file_name,".csv.gz"))
-  }else{
-    fname <- file.path(forecast_output_directory, paste0(da_forecast_output$save_file_name_short,".csv.gz"))
-  }
+  output_list <- output_list %>%
+    dplyr::mutate(pub_time = time_of_forecast,
+                  reference_datetime = forecast_start_datetime,
+                  site_id = config$location$site_id,
+                  model_id = config$run_config$sim_name,
+                  family = "ensemble") %>%
+    rename(datetime = time,
+           parameter = ensemble,
+           prediction = predicted) %>%
+    dplyr::select(reference_datetime, datetime, pub_time, model_id, site_id, depth, family, parameter, variable, prediction, forecast, variable_type)
 
   for(i in 1:length(states_config$state_names)){
     if(length(which(obs_config$state_names_obs == states_config$state_names[i])) >0){
