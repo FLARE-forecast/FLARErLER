@@ -322,7 +322,7 @@ run_model_ler <- function(model,
                      w_ice = restart_list$w_ice[i-1, m],
                      snow = restart_list$snow[i-1, m])
 
-    yml[["model_parameters"]][[model]][["Simulation/Timestep s"]] <- 3600
+    #yml[["model_parameters"]][[model]][["Simulation/Timestep s"]] <- 300
 
   }
 
