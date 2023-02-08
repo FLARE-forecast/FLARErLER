@@ -455,25 +455,24 @@ run_model_ler <- function(model,
           x_star_end[2, ] <- approx(glm_depths_mid, glm_salt, modeled_depths, rule = 2)$y
 
         } else if(model == "GOTM") {
-          x_star_end[1, ] <- ler_temp_out$output[ ,1]
-          x_star_end[2, ] <- ler_temp_out$output[ ,2]
+          #x_star_end[1, ] <- ler_temp_out$output[ ,1]
+          #x_star_end[2, ] <- ler_temp_out$output[ ,2]
 
           num_glm_depths <- length(ler_temp_out$depths_enkf)
-          simstrat_temps <-ler_temp_out$output[ ,1]
-          simstrat_depths_end  <- ler_temp_out$depths_enkf
-          simstrat_depths_tmp <- ler_temp_out$depths_enkf
+          gotm_temps <-ler_temp_out$output[ ,1]
+          #gotm_depths_end  <- ler_temp_out$depths_enkf
+          gotm_depths_tmp <- ler_temp_out$depths_enkf
 
-          x_star_end[1, ] <- approx(simstrat_depths_tmp,simstrat_temps, modeled_depths, rule = 2)$y
+          x_star_end[1, ] <- approx(gotm_depths_tmp,gotm_temps, modeled_depths, rule = 2)$y
 
-          simstrat_salt <- ler_temp_out$output[ ,2]
-          x_star_end[2, ] <- approx(simstrat_depths_tmp, simstrat_salt, modeled_depths, rule = 2)$y
+          gotm_salt <- ler_temp_out$output[ ,2]
+          x_star_end[2, ] <- approx(gotm_depths_tmp, gotm_salt, modeled_depths, rule = 2)$y
 
 
         } else if (model == "Simstrat") {
 
           num_glm_depths <- length(ler_temp_out$depths_enkf)
           simstrat_temps <-ler_temp_out$output[ ,1]
-          simstrat_depths_end  <- ler_temp_out$depths_enkf
           simstrat_depths_tmp <- ler_temp_out$depths_enkf
           simstrat_depths_mid <-  simstrat_depths_tmp[1:(length( simstrat_depths_tmp)-1)] + diff( simstrat_depths_tmp)/2
 
