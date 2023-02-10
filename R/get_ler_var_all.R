@@ -84,7 +84,8 @@ get_ler_var_all <- function(model,
     output <- array(NA, dim=c(length(restart_vars$z_vars$temp), length(vars_depth)))
     output[, 1] <- restart_vars$z_vars$temp
     output[, 2] <- restart_vars$z_vars$salt
-    depths_enkf <- abs(restart_vars$z_vars$z)
+    depths_enkf <- abs(restart_vars$zi_vars$zi)
+    depths_enkf <- depths_enkf[1:(length(depths_enkf)-1)]
     lake_depth <- max(depths_enkf)
     salt <- output[, 2]
     diagnostics_output <- NULL
