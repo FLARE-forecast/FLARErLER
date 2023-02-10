@@ -253,7 +253,7 @@ run_da_forecast_ler <- function(states_init,
     if(length(aux_states_init) > 0) {
       # z vars
       z[1, , ] <- aux_states_init$z_vars$z
-      lake_depth[1, ] <- max(aux_states_init$z_vars$z)
+      lake_depth[1, ] <- max(abs(aux_states_init$zi_vars$zi))
       # temp[1, , ] <- aux_states_init$z_vars$temp
       #salt[1, , ] <- aux_states_init$z_vars$salt
       u[1, , ] <- aux_states_init$z_vars$u

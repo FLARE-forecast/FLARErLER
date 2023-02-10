@@ -75,11 +75,17 @@ set_up_model_ler <- function(model,
 
   gotmtools::write_yaml(ler_yaml, yaml_file)
 
-  suppressMessages({LakeEnsemblR::export_config(config_file = basename(yaml_file), model = model, dirs = TRUE,
+  suppressMessages({
+    LakeEnsemblR::export_config(config_file = basename(yaml_file), model = model, dirs = TRUE,
                               time = FALSE, location = TRUE, output_settings = TRUE,
                               meteo = TRUE, init_cond = FALSE, extinction = TRUE,
                               inflow = TRUE, model_parameters = TRUE,
-                              folder = ens_working_directory)})
+                              folder = ens_working_directory)
+    })
+
+    if(file.exists(file.path(ens_working_directory,model,"restart.nc"))){
+      unlink(file.path(ens_working_directory,model,"restart.nc"))
+    }
 
 
 }
