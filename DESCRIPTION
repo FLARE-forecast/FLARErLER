@@ -55,10 +55,10 @@ Remotes:
     github::FLARE-forecast/GLM3r,
     github::eco4cast/EFIstandards,
     github::GLEON/rLakeAnalyzer,
-    github::aemon-j/GOTMr,
-    github::tadhg-moore/SimstratR,
+    github::FLARE-forecast/GOTMr,
+    github::FLARE-forecast/SimstratR,
     github::aemon-j/gotmtools@yaml,
-    github::USGS-R/glmtools@ggplot_overhaul,
-    github::tadhg-moore/LakeEnsemblR@flare
+    github::rqthomas/glmtools,
+    github::FLARE-forecast/LakeEnsemblR
 VignetteBuilder: rmarkdown
 Config/testthat/edition: 3
