@@ -324,7 +324,7 @@ run_model_ler <- function(model,
   setwd(working_directory)
 
   if(i == 2 & m == 1){
-    file.copy(from = paste0(working_directory, "/", "LakeEnsemblR.yaml"), #GLM SPECIFIC
+    file.copy(from = paste0(working_directory, "/", config$model_settings$base_ler_yaml), #GLM SPECIFIC
               to = paste0(working_directory, "/", "LakeEnsemblR_initial.yaml"),
               overwrite = TRUE) #GLM SPECIFIC
   }
