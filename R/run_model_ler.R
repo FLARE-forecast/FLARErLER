@@ -294,13 +294,13 @@ run_model_ler <- function(model,
   })
 
   # Don't write restart on the first time step for GOTM & Simstrat
-  # if((model == "GOTM" & !all(is.na(inp_list$z_vars$u)))| (model == "Simstrat" & !all(is.na(inp_list$temp)))) {
-  #   LakeEnsemblR::write_restart(folder = working_directory, model = model,
-  #                               restart_list = inp_list)
-  # } else if(model == "GLM") {
-  #   LakeEnsemblR::write_restart(folder = working_directory, model = model,
-  #                               restart_list = inp_list)
-  # }
+  if((model == "GOTM" & !all(is.na(inp_list$z_vars$u)))| (model == "Simstrat" & !all(is.na(inp_list$temp)))) {
+    LakeEnsemblR::write_restart(folder = working_directory, model = model,
+                                restart_list = inp_list)
+  } else if(model == "GLM") {
+    LakeEnsemblR::write_restart(folder = working_directory, model = model,
+                                restart_list = inp_list)
+  }
 
 
 
