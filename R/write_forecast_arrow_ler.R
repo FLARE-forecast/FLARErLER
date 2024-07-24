@@ -157,12 +157,12 @@ write_forecast_arrow_ler <- function(da_forecast_output,
     }
   }
 
-  reference_datetime_format <- "%Y-%m-%d %H:%M:%S"
+  output_list <- output_list |>
+    mutate(reference_date = lubridate::as_date(reference_datetime))
 
-  output_list <- output_list |> mutate(reference_datetime = strftime(lubridate::as_datetime(reference_datetime),format=reference_datetime_format,tz = "UTC"))
   arrow::write_dataset(dataset = output_list,
                        path = output_directory,
-                       partitioning = c("site_id","model_id","reference_datetime"))
+                       partitioning = c("site_id","model_id","reference_date"))
 
   return(output_list)
 
